@@ -5,11 +5,11 @@ from . import page
 
 
 class Chapter:
-    def __init__(self, manga: 'manga.Manga', name: str, groups: str, chapter: float, language: str, uri: str):
+    def __init__(self, manga: 'manga.Manga', name: str, groups: str, chapter_num: float, language: str, uri: str):
         self.manga = manga
         self.name = name
         self.groups = groups
-        self.chapter = chapter
+        self.chapter_num = chapter_num
         self.uri = uri
         self.language = language
 

@@ -6,10 +6,10 @@ from . import chapter
 
 
 class Manga:
-    def __init__(self, title: str, authors: List[str], alt_title: List[str], status: int, uri: str):
+    def __init__(self, title: str, authors: List[str], alt_titles: List[str], status: int, uri: str):
         self.title = title
         self.authors = authors
-        self.alt_titles
+        self.alt_titles = alt_titles
         self.status = status
         self.uri = uri
 
