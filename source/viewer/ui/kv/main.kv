@@ -1,0 +1,26 @@
+#:import SourcesScreen viewer.ui.screens.source_screen.SourcesScreen
+#:import MangaInfoScreen viewer.ui.screens.mangainfo_screen.MangaInfoScreen
+#:import ReaderScreen viewer.ui.screens.reader_screen.ReaderScreen
+#:import hex kivy.utils.get_color_from_hex
+
+ScreenManager:
+    canvas:
+        Color:
+            rgba: hex(app.pallete.background)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+    SourcesScreen:
+        id: sources_screen
+        name: 'sources_screen'
+        screen_number: 0
+    MangaInfoScreen:
+        id: manga_info_screen
+        name: 'manga_info_screen'
+        screen_number: 1
+    ReaderScreen:
+        id: reader_screen
+        name: 'reader_screen'
+        screen_number: 2
+

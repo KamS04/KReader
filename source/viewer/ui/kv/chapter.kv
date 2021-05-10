@@ -1,0 +1,42 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<ChapterWidget>:
+    canvas.before:
+        Color:
+            rgba: hex(app.pallete.button_border)
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: 15, 15, 15, 15
+        
+        Color:
+            rgba: hex(app.pallete.button_click) if root.state == 'down' else hex(app.pallete.item_background)
+        RoundedRectangle:
+            size: self.size[0] - 2, self.size[1] - 2
+            pos: self.pos[0], self.pos[1] + 2
+            radius: 15, 15, 15, 15
+    
+    FloatLayout:
+        size: root.size
+        pos: root.pos
+
+        Label:
+            pos_hint: { 'x': .125, 'top': 1 }
+            size_hint: .975, .7
+            text: f'Chapter {round(root.chapter.chapter_num, 1)} {root.chapter.title}' if root.chapter is not None else ''
+            color: app.pallete.text
+            text_size: self.size
+            halign: 'left'
+            valign: 'center'
+            font_size: 18
+
+        Label:
+            pos_hint: { 'x': .125, 'y': 0 }
+            size_hint: .975, .3
+            text: ', '.join(root.chapter.groups) if root.chapter is not None else ''
+            color: app.pallete.text
+            halign: 'left'
+            valign: 'center'
+            text_size: self.size
+            font_size: 12
+

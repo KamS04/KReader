@@ -1,0 +1,22 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<AImage>:
+    canvas.before:
+        Color:
+            rgba: self.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    
+    canvas.after:
+        Color:
+            rgba: hex(app.pallete.colored_highlight) if self.loading else (0, 0, 0, 0)
+        PushMatrix
+        Rotate:
+            angle: self.angle
+            origin: self.center
+        Line:
+            width: 4
+            circle: self.center_x, self.center_y, 35, 0, self.arc_angle
+        PopMatrix
+
