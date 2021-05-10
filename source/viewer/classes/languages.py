@@ -1,0 +1,2 @@
+UNKNOWN = 0
+ENGLISH = 1
