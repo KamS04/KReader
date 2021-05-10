@@ -12,3 +12,4 @@ class Page:
     def get_image(self) -> Tuple[BytesIO, str]:
         ''' Returns the Image to be displayed as a page '''
         pass
+

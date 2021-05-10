@@ -24,3 +24,4 @@ class Manga:
     def from_uri(uri: str) -> 'Manga':
         ''' Creates a manga from a specified URI '''
         pass
+
