@@ -12,8 +12,8 @@ from . import page
 class CBZChapter(chapter.Chapter):
     accepted_file_types = ('cbz', 'zip')
 
-    def __init__(self, manga: 'manga.CBZManga', name: str, groups: List[str], chapter_num: float, language: str, uri: str):
-        super().__init__(manga, name, groups, chapter_num, language, uri)
+    def __init__(self, manga: 'manga.CBZManga', title: str, groups: List[str], chapter_num: float, language: str, uri: str):
+        super().__init__(manga, title, groups, chapter_num, language, uri)
     
     def get_pages(self) -> List['page.CBZPage']:
         page_names: List[str] = []

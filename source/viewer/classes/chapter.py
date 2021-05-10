@@ -5,9 +5,9 @@ from . import page
 
 
 class Chapter:
-    def __init__(self, manga: 'manga.Manga', name: str, groups: str, chapter_num: float, language: str, uri: str):
+    def __init__(self, manga: 'manga.Manga', title: str, groups: str, chapter_num: float, language: str, uri: str):
         self.manga = manga
-        self.name = name
+        self.title = title
         self.groups = groups
         self.chapter_num = chapter_num
         self.uri = uri
@@ -17,7 +17,7 @@ class Chapter:
         '''Returns a List of Pages '''
         pass
 
-    def from_uri(uri: str, magna: 'manga.Manga', metadata: Dict[Any, Any]) -> 'Chapter':
+    def from_uri(uri: str, manga: 'manga.Manga', metadata: Dict[Any, Any]) -> 'Chapter':
         ''' Creates a chapter from specified uri '''
         pass
 

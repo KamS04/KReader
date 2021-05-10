@@ -17,8 +17,8 @@ class CBZManga(manga.Manga):
     def info_file_path(self):
         return CBZManga.get_info_file_path(self.uri)
 
-    def __init__(self, name: str, authors: List[str], alt_titles: List[str], status: int, uri: str):
-        super().__init__(name, authors, alt_titles, status, uri)
+    def __init__(self, title: str, authors: List[str], alt_titles: List[str], status: int, uri: str):
+        super().__init__(title, authors, alt_titles, status, uri)
 
     def get_chapters(self) -> List['chapter.CBZChapter']:
         chapters : List[chapter.CBZChapter] = []

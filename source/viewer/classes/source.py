@@ -1,3 +1,5 @@
+from typing import List
+
 from . import manga
 
 class Source:
@@ -10,4 +12,7 @@ class Source:
     def get(uri: str) -> 'manga.Manga':
         ''' Turn the uri from choose() into a Manga object '''
         pass
-
+    
+    def search(query: str) -> List['manga.Manga']:
+        ''' Search for Manga '''
+        pass

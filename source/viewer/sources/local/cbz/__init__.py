@@ -1,10 +1,12 @@
-from ....classes.source import Source
-
-from .manga import CBZManga
+from typing import List
 
 import os
 from tkinter import Tk
 from tkinter import filedialog
+
+from ....classes.source import Source
+from .manga import CBZManga
+
 
 def verify(path: str) -> bool:
     ''' Makes sure the selected path is not None, exists, and is a directory '''
@@ -17,7 +19,7 @@ class CBZ(Source):
     name = 'CBZ'
 
     def choose() -> str:
-        ''' Creates a filedialog to find a directory which '''
+        ''' Creates a filedialog to find a directory which hopefully contains cbz files '''
         root = Tk()
         root.withdraw()
         path = filedialog.askdirectory()
@@ -28,3 +30,5 @@ class CBZ(Source):
     def get(uri: str) -> CBZManga:
         return CBZManga.from_uri(uri) if verify(uri) else None
 
+    def search(query: str) -> List['manga.CBZManga']:
+        return []
