@@ -13,8 +13,8 @@ from .. import constants
 from ..widgets.gridlayout import SVGridLayout
 
 
-class SourcesScreen(MDScreen):
-    kv_file = os.path.join( os.getenv(constants.KV_FOLDER), 'sources_screen.kv')
+class HomeScreen(MDScreen):
+    kv_file = os.path.join( os.getenv(constants.KV_FOLDER), 'home_screen.kv')
     sources_grid: SVGridLayout = ObjectProperty()
     sources: List[source.Source] = []
 
@@ -38,5 +38,5 @@ class SourcesScreen(MDScreen):
         App.get_running_app().select_from_source(source)
 
 
-Builder.load_file(SourcesScreen.kv_file)
+Builder.load_file(HomeScreen.kv_file)
 

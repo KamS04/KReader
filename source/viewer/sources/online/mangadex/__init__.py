@@ -1,8 +1,12 @@
+from typing import Generator, List
+
 from ....classes import source
 
 from . import manga
 
 import tkinter as tk
+import requests
+import json
 
 _tmp_uri = None
 
@@ -13,6 +17,7 @@ def _set_tmp_uri(root: tk.Tk, uri: str):
 
 class MangaDex(source.Source):
     name = 'mangadex.org'
+    _search_api = 'http://api.mangadex.org/manga?'
 
     def choose() -> str:
         global _tmp_uri
@@ -43,5 +48,25 @@ class MangaDex(source.Source):
             return manga.MangaDexManga.from_uri(uri)
         return None
 
-    def search(query: str) -> List['manga.Manga']:
-        return []]
+    def call_search_for_manga(query, offset=0, limit=20):
+        url = MangaDex._search_api + 'title=%s&offset=%d&limit=%d' % (query, offset, limit)
+        return requests.get(url)
+
+    def get_search_data(query) -> Generator[List[dict], None, None]:
+        offset = 0
+        while True:
+            req = MangaDex.call_search_for_manga(query, offset=offset)
+            if req.status_code == 200:
+                all_data = json.loads(req.content)
+                yield all_data['results']
+
+                offset = all_data['offset']  + all_data['limit']
+                total = all_data['total']
+                if offset >= total:
+                    break
+
+    def search(query: str) -> Generator[List['manga.Manga'], None, None]:
+        for results in MangaDex.get_search_data(query):
+            mangas_found = [ manga.MangaDexManga.from_data(manga_data) for manga_data in results ]
+            yield mangas_found
+

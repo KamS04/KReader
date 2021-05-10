@@ -78,20 +78,29 @@ class MangaDexManga(manga.Manga):
         # Mangadex API doesn't support cover images yet
         return None
     
+    def from_data(data: dict, uri: str=None, uuid: str=None) -> 'MangaDexManga':   
+        if uuid is None:
+            uuid = data['data']['id']
+        if uri is None:
+            uri = MangaDexManga._manga_api % uuid
+
+        alt_titles = [ title['en'] for title in data['data']['attributes']['altTitles'] if 'en' in title.keys()]
+        status = STATUS_MAP[ data['data']['attributes']['status'] ]
+        title = data['data']['attributes']['title']['en']
+
+        # this is a set because sometimes the author and artist is the same but is listed twice, but I don't want duplicate uuids
+        author_uuids = { rel['id'] for rel in data['relationships'] if rel['type'] == 'author' or rel['type'] == 'artist' }
+        authors = MangaDexManga.get_authors(*author_uuids)
+
+        return MangaDexManga(title, authors, alt_titles, status, uri, uuid)
+
     def from_uri(uri: str) -> 'MangaDexManga':
         if MangaDexManga.match_query.match(uri):
             uuid = MangaDexManga.get_uuid_from_uri(uri)
             req = MangaDexManga.call_manga_api(uuid)
 
             if req.status_code == 200:
-                data = json.loads(req.content)        
-                alt_titles = [ title['en'] for title in data['data']['attributes']['altTitles'] if 'en' in title.keys()]
-                status = STATUS_MAP[ data['data']['attributes']['status'] ]
-                title = data['data']['attributes']['title']['en']
-
-                # this is a set because sometimes the author and artist is the same but is listed twice, but I don't want duplicate uuids
-                author_uuids = { rel['id'] for rel in data['relationships'] if rel['type'] == 'author' or rel['type'] == 'artist' }
-                authors = MangaDexManga.get_authors(*author_uuids)
-
-                return MangaDexManga(title, authors, alt_titles, status, uri, uuid)
+                data = json.loads(req.content)
+                return MangaDexManga.from_data(data, uri, uuid)
+            
         return None
