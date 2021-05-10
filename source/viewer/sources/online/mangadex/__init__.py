@@ -42,3 +42,6 @@ class MangaDex(source.Source):
         if manga.MangaDexManga.match_query.match(uri):
             return manga.MangaDexManga.from_uri(uri)
         return None
+
+    def search(query: str) -> List['manga.Manga']:
+        return []]

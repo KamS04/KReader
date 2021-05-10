@@ -13,6 +13,7 @@ class LoadingBar(Widget):
     loading = BooleanProperty()
     arc_angle = NumericProperty(270)
     angle = NumericProperty(0)
+    anim: Animation = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,14 +25,15 @@ class LoadingBar(Widget):
     
     def stop_loading(self):
         self.loading = False
-        self.anim.stop(self)
+        if self.anim is not None:
+            self.anim.stop(self)
 
     def start_animating(self):
         self.angle = 0
         self.arc_angle = 270
         self.animate()
 
-    def animate(self):
+    def animate(self, animation=None, animating_object=None):
         self.anim = Animation(angle=self.angle-360, arc_angle=0 if self.arc_angle == 270 else 270, duration=2)
         self.anim.bind(on_complete=self.animate)
         self.anim.start(self)

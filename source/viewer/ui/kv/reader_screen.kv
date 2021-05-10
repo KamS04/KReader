@@ -1,0 +1,41 @@
+#:import LoadingBar viewer.ui.widgets.loading_bar.LoadingBar
+#:import hex kivy.utils.get_color_from_hex
+
+
+<LoadingCover@LoadingBar>:
+    loading: False
+    on_loading:
+        self.start_loading() if self.loading else self.stop_loading()
+
+
+<PageWidget>:
+    width: self.texture.width if self.texture is not None else 400
+    height: min(self.width / self.texture.width * self.texture.height, self.texture.height) if self.texture is not None else 80
+    size_hint_y: None
+    clickable: False
+
+
+<ReaderScreen>:
+    pages_grid: pages_grid
+
+    FloatLayout:
+        
+        LoadingCover:
+            pos_hint: { 'center_x': 0.5, 'center_y': 0.5 } if self.loading else { 'x': 0, 'y': 0 }
+            size_hint: (1, 1) if self.loading else (0, 0)
+            loading: root.loading_meta
+        
+        ScrollView:
+            size_hint: 1, 1
+            pos_hint: { 'center_x': 0.5, 'center_y': 0.5 }
+
+            MDGridLayout:
+                id: pages_grid
+                cols: 1
+                size_hint: None, None
+                height: self.minimum_height
+                width: root.width
+                pos: 0, 0
+                padding: 0, 0, 0, 0
+                spacing: 0, 0
+

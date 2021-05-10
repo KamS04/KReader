@@ -1,0 +1,40 @@
+#:import hex kivy.utils.get_color_from_hex
+#:import BLabel viewer.ui.widgets.label.BLabel
+#:import SVGridLayout viewer.ui.widgets.gridlayout.SVGridLayout
+
+<SourcesScreen>:
+    sources_grid: sources_grid
+    mg_bg_color: hex(app.pallete.background)
+
+    FloatLayout:
+
+        BLabel:
+            text: 'Sources'
+            size_hint: 0.5, 0.1
+            pos_hint: { 'top': 1 - self.size_hint[1] / 4, 'center_x': 0.5 }
+            color: app.pallete.text
+            background_color: hex(app.pallete.background_highlight)
+            background_radius: 5, 5, 5, 5
+            halign: 'center'
+            font_size: 30
+        
+        ScrollView:
+            size_hint: 0.95, 0.8
+            pos_hint: { 'center_x': 0.5, 'y': 0.05 }
+            orientation: 'vertical'
+            id: scroll_view
+
+            SVGridLayout:
+                canvas.before:
+                    Color:
+                        rgb: 1, 0, 0
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                
+                id: sources_grid
+                padding: 10, 10, 10, 10
+                spacing: 50, 10
+                cols: 5
+                pos: (scroll_view.size[0] // 2 - self.size[0] // 2), 0
+

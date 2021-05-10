@@ -9,7 +9,7 @@ from . import chapter
 
 class MangaDexPage(page.Page):
     def __init__(self, number: int, chapter: 'chapter.MangaDexChapter', data: Any, server=None, file=None):
-        super().__init__(self, number, chapter, data)
+        super().__init__(number, chapter, data)
         self.file: str = file if file else self.data['file']
         self.server: str = server if server else self.data['server']
     
@@ -21,6 +21,7 @@ class MangaDexPage(page.Page):
             return data, ext
         return None, None
     
+    @property
     def file_url(self) -> str:
         return f'{self.server}/data/{self.chapter.chapter_hash}/{self.file}'
 

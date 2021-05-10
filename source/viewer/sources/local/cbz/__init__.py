@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Generator
 
 import os
 from tkinter import Tk
@@ -30,5 +30,6 @@ class CBZ(Source):
     def get(uri: str) -> CBZManga:
         return CBZManga.from_uri(uri) if verify(uri) else None
 
-    def search(query: str) -> List['manga.CBZManga']:
+    def search(query: str) -> Generator[List['manga.Manga'], None, None]:
         return []
+

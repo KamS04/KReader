@@ -17,7 +17,7 @@ uuid_regex = r'[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[
 class MangaDexManga(manga.Manga):
     match_query: Pattern = re.compile(url_regex)
     uuid_query: Pattern = re.compile(uuid_regex)
-    _base_api = 'http://api.mangdex.org/'
+    _base_api = 'https://api.mangadex.org/'
     _manga_api = _base_api + 'manga/%s'
     _chapter_for_manga_api = _base_api + 'chapter?manga=%s&limit=%d&offset=%d'
     _chapter_api = _base_api + 'chapter/%s'
@@ -47,7 +47,7 @@ class MangaDexManga(manga.Manga):
             return authors
         return []
 
-    def gen_chapters_json(self) -> Generator[List[dict]]:
+    def gen_chapters_json(self) -> Generator[List[dict], None, None]:
         offset = 0
         while True:
             req = self.call_get_chapters_list(self.uuid, offset=offset)
@@ -79,7 +79,7 @@ class MangaDexManga(manga.Manga):
         return None
     
     def from_uri(uri: str) -> 'MangaDexManga':
-        if MangaDexManga.match_query(uri):
+        if MangaDexManga.match_query.match(uri):
             uuid = MangaDexManga.get_uuid_from_uri(uri)
             req = MangaDexManga.call_manga_api(uuid)
 

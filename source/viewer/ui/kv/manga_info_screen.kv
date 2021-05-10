@@ -1,0 +1,122 @@
+#:import AImage viewer.ui.widgets.image.AImage
+#:import ImageButton viewer.ui.widgets.image.ImageButton
+#:import BLabel viewer.ui.widgets.label.BLabel
+#:import STATUS_MAP viewer.classes.status.STATUS_MAP
+#:import hex kivy.utils.get_color_from_hex
+#:import ChapterWidget viewer.ui.widgets.chapter.ChapterWidget
+#:import ARecycleView viewer.ui.widgets.recycleview.ARecycleView
+
+
+<MangaInfoScreen>:
+    cover_image: cover_image
+    md_bg_color: hex(app.pallete.background)
+    chapters_recycleview: chapters_recycleview
+
+    GridLayout:
+        cols: 2
+        padding: 10, 10, 10, 10
+
+        FloatLayout:
+            canvas.before:
+                Color:
+                    rgba: hex(app.pallete.background)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            
+            AImage:
+                id: cover_image
+                size_hint: None, None
+                size: root.get_cover_image_size(root.width)
+                pos_hint: { 'center_x': 0.5, 'top': 1 }
+                background_color: hex('#111111')
+            
+            ImageButton:
+                source: app.images + '/back.png'
+                size_hint: 0.05, 0.05
+                pos_hint: { 'x': 0.005, 'top': 0.995 }
+                color: hex(app.pallete.colored_highlight)
+                on_press:
+                    root.go_back_to_sources()
+            
+            GridLayout:
+                cols: 1
+                size_hint: 0.9, None
+                height: root.height - cover_image.height - root.height * 0.05
+                pos_hint: { 'center_x': 0.5, 'y': 0.025 }
+
+                BLabel:
+                    background_color: app.pallete.background_highlight
+                    text: root.selected_manga.title if root.selected_manga is not None else ''
+                    pos_hint:  { 'center_x': 0.5, 'center_y': 0.5 }
+                    size_hint: 1, 0.5
+                    halign: 'center'
+                    valign: 'center'
+                    color: 1, 1, 1, 1
+                    font_size: 18
+                    background_radius: 5, 5, 5, 5
+
+                MDGridLayout:
+                    cols: 2
+                    padding: 5, 5, 5, 5
+                    spacing: 5, 5
+                    md_bg_color: hex('#424242')
+
+                    BLabel:
+                        background_color: app.pallete.background_highlight
+                        text: 'Authors:'
+                        background_radius: 3, 3, 3, 3
+                        color: app.pallete.text
+                        halign: 'center'
+                        valign: 'center'
+                    
+                    BLabel:
+                        background_color: app.pallete.background_highlight
+                        text: ', '.join(root.selected_manga.authors) if root.selected_manga is not None else ''
+                        color: app.pallete.text
+                        halign: 'center'
+                        valign: 'center'
+                    
+                    BLabel:
+                        background_color: app.pallete.background_highlight
+                        background_radius: 3, 3, 3, 3
+                        color: app.pallete.text
+                        text: 'Alternatives:'
+                        halign: 'center'
+                        valign: 'center'
+                    
+                    BLabel:
+                        background_color: app.pallete.background_highlight
+                        text: ', '.join(root.selected_manga.alt_titles) if root.selected_manga is not None else ''
+                        color: app.pallete.text
+                        font_size: 8
+                        halign: 'center'
+                        valign: 'center'
+
+                    BLabel:
+                        background_color: app.pallete.background_highlight
+                        background_radius: 3, 3, 3, 3
+                        color: app.pallete.text
+                        text: 'Status:'
+                        halign: 'center'
+                        valign: 'center'
+                    
+                    BLabel:
+                        background_color: app.pallete.background_highlight
+                        text: STATUS_MAP[root.selected_manga.status] if root.selected_manga is not None else ''
+                        color: app.pallete.text
+                        halign: 'center'
+                        valign: 'center'
+
+        ARecycleView:
+            id: chapters_recycleview
+            viewclass: 'ChapterWidget'
+            
+            RecycleBoxLayout:
+                default_size: None, None
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+                spacing: 10, 0
+

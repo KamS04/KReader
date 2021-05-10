@@ -22,8 +22,8 @@ class CBZChapter(chapter.Chapter):
 
         for zipentry in file.filelist:
             if (not zipentry.is_dir() and
-                os.path.basename(zipentry.filename).split(os.path.extsep)[-1] in sources.sources.ALLOWED_IMAGE_TYPES):
-                page_names.apend(zipentry.filename)
+                os.path.basename(zipentry.filename).split(os.path.extsep)[-1] in sources.ALLOWED_IMAGE_TYPES):
+                page_names.append(zipentry.filename)
         page_names.sort()
         
         for number, page_name in enumerate(page_names):
@@ -40,7 +40,7 @@ class CBZChapter(chapter.Chapter):
             meta_keys = metadata.keys()
             name = metadata['name'] if 'name' in meta_keys else os.path.basename(uri)
             groups = metadata['group'] if 'group' in meta_keys else ['No Group']
-            chapter_num = metadata['chapter_number']
+            chapter_num = metadata['chapter_number'] if 'chapter_number' in meta_keys else 0
             language = metadata['language'] if 'language' in meta_keys in meta_keys else languages.ENGLISH
 
             return CBZChapter(manga, name, groups, chapter_num, language, uri)

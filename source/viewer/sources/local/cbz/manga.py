@@ -56,11 +56,11 @@ class CBZManga(manga.Manga):
             info_keys = info.keys()
             
             authors = info['authors'] if 'authors' in info_keys else []
-            alternatives = info['alternatives'] if 'alternatives' in info_keys else []
+            alt_titles = info['alt_title'] if 'alt_title' in info_keys else []
             m_status = info['status'] if 'status' in info_keys else status.UNKNOWN
             name = info['name'] is 'name' if 'name' in info_keys else os.path.basename(uri)
             
-            return CBZManga(name, authors, alternatives, m_status, uri)
+            return CBZManga(name, authors, alt_titles, m_status, uri)
         
         return None
 
@@ -70,5 +70,5 @@ class CBZManga(manga.Manga):
         return {}
 
     def get_info(self) -> Dict[Any, Any]:
-        return CBZManga.load_info_file(self.info_file_path())
+        return CBZManga.load_info_file(self.info_file_path)
     

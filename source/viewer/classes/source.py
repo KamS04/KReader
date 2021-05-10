@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Generator
 
 from . import manga
 
@@ -13,6 +13,6 @@ class Source:
         ''' Turn the uri from choose() into a Manga object '''
         pass
     
-    def search(query: str) -> List['manga.Manga']:
+    def search(query: str) -> Generator[List['manga.Manga'], None, None]:
         ''' Search for Manga '''
         pass

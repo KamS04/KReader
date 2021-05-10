@@ -26,7 +26,7 @@ class MangaDexChapter(chapter.Chapter):
         'language'
     }
     _chapter_uri = 'http://mangadex.org/chapter/%s'
-    _server_api = 'http://api.mangadex/at-home/server/%s'
+    _server_api = 'http://api.mangadex.org/at-home/server/%s'
     _groups_api_endpoint = 'http://api.mangadex.org/group?'
 
     def call_chapter_api(uuid: str) -> requests.Response:
@@ -37,7 +37,7 @@ class MangaDexChapter(chapter.Chapter):
 
     def get_groups(*group_uuids: str) -> List[str]:
         query_params = '&'.join( 'ids=[]' + uuid for uuid in group_uuids )
-        url = MangaDexChapter._authors_api_endpoint + query_params + '&limit=%d' % len(group_uuids) # I'm assuming there's going to be less than 100 groups
+        url = MangaDexChapter._groups_api_endpoint + query_params + '&limit=%d' % len(group_uuids) # I'm assuming there's going to be less than 100 groups
         req = requests.get(url)
         
         if req.status_code == 200:
@@ -62,7 +62,7 @@ class MangaDexChapter(chapter.Chapter):
         server = self.get_data_server()
         pages: List[page.MangaDexPage] = []
         for idx, page_file in enumerate(self.page_files):
-            page_found = page.MangaDexPage(idx + 1, self, None, server, page_file)
+            page_found = page.MangaDexPage(idx + 1, self, None, server=server, file=page_file)
             pages.append(page_found)
         
         return pages

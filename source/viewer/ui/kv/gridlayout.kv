@@ -4,7 +4,7 @@
 <LoadingBar>:
     canvas.after:
         Color:
-            rgba: hex(app.pallete.colored_highlight) is self.loading else (0, 0, 0, 0)
+            rgba: hex(app.pallete.colored_highlight) if self.loading else (0, 0, 0, 0)
         PushMatrix
         Rotate
             angle: self.angle
