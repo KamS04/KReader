@@ -37,6 +37,15 @@ Installation Instructions
          ```
          bash install-mac
          ```
+    - Linux uses must also install tkinter, this varies with distribution so you can do it yourselves
+        -  For distribution based on Debian the following command will work
+        ```
+        sudo apt-get install pyt
+        ```
+        - For distributions based on Fedora the following command will work
+        ```
+        sudo dnf install python3-tkinter
+        ```
 6. Run the KReader script
     - For windows users, run ```KReader-win.bat```
     - For MacOS or Linux, run ```KReader-mac```
