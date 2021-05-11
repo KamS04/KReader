@@ -1,7 +1,7 @@
 #!/bin/bash
 cd -- "$(dirname "$BASH_SOURCE")"
 
-if ! command -v python3 > /dev/null
+if [ ! command -v python3 > /dev/null ]
 then
     echo Python 3 is not installed
     echo Install Python 3 before running this
@@ -11,7 +11,7 @@ fi
 
 echo Python 3 exists
 
-if ! command -v python3 -m pip --version > /dev/null
+if [ ! command -v python3 -m pip --version > /dev/null ]
 then
     echo Pip is not installed
     echo Download pip from https://bootstrap.pypa.io/get-pip.py
@@ -20,7 +20,7 @@ fi
 
 echo Pip is installed
 
-if ! -d "./venv"
+if [ ! -d "./venv" ]
 then
     echo Creating Virtual Environment
     python3 -m pip install virtualenv
