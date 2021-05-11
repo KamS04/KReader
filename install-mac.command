@@ -1,3 +1,6 @@
+#!/bin/bash
+cd -- "$(dirname "$BASH_SOURCE")"
+
 if ! command -v python3 > /dev/null
 then
     echo Python 3 is not installed
