@@ -64,6 +64,9 @@ class MangaDex(source.Source):
                 total = all_data['total']
                 if offset >= total:
                     break
+            if req.status_code == 204:
+                yield []
+                break
 
     def search(query: str) -> Generator[List['manga.Manga'], None, None]:
         for results in MangaDex.get_search_data(query):

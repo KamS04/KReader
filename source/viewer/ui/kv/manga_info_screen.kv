@@ -32,7 +32,7 @@
                 background_color: hex('#111111')
             
             ImageButton:
-                source: app.images + '/back.png'
+                source: app.get_image('back.png')
                 size_hint: 0.05, 0.05
                 pos_hint: { 'x': 0.005, 'top': 0.995 }
                 color: hex(app.pallete.colored_highlight)

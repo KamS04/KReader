@@ -19,12 +19,12 @@
     pages_grid: pages_grid
 
     FloatLayout:
-        
+
         LoadingCover:
             pos_hint: { 'center_x': 0.5, 'center_y': 0.5 } if self.loading else { 'x': 0, 'y': 0 }
             size_hint: (1, 1) if self.loading else (0, 0)
-            loading: root.loading_meta
-        
+            loading: root.loading_meta    
+    
         ScrollView:
             size_hint: 1, 1
             pos_hint: { 'center_x': 0.5, 'center_y': 0.5 }
@@ -39,3 +39,10 @@
                 padding: 0, 0, 0, 0
                 spacing: 0, 0
 
+        ImageButton:
+            source: app.get_image('back.png')
+            size_hint: 0.05, 0.05
+            pos_hint: { 'x': 0.005, 'top': 0.995 }
+            color: hex(app.pallete.colored_highlight)
+            on_press:
+                root.go_back_to_manga_screen()

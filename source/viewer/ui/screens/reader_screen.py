@@ -15,6 +15,7 @@ from kivy.properties import BooleanProperty, ObjectProperty, StringProperty
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.gridlayout import MDGridLayout
 from kivy.uix.label import Label
+from kivy.app import App
 
 import os
 from functools import partial
@@ -35,35 +36,59 @@ class ReaderScreen(MDScreen):
     kv_file = os.path.join( os.getenv(constants.KV_FOLDER), 'reader_screen.kv')
     loading_meta: bool = BooleanProperty(False)
     pages_grid: MDGridLayout = ObjectProperty()
+    _ask_query = 0
+    _pages_get_task = None
+    _images_get_task = None
 
     def show_chapter(self, chapter: chapter.Chapter):
         self.loading_meta = True
-        asynctask.AsyncTask(chapter.get_pages, self.receive_pages).start()
+        self._ask_query += 1
+        self._pages_get_task = asynctask.AsyncTask(chapter.get_pages, partial(self.receive_pages, self._ask_query))
+        self._pages_get_task.start()
     
-    def receive_pages(self, result: List[page.Page], time_delta):
-        print(len(result), 'pages found')
-        self.loading_meta = False
-        pages_to_load: List[Tuple[page.Page, PageWidget]] = []
-        result.sort(key=lambda i: i.number)
-        for page_meta in result:
-            image = PageWidget()
-            self.pages_grid.add_widget(image)
-            pages_to_load.append((page_meta, image))
+    def receive_pages(self, query_id: int, result: List[page.Page], time_delta):
+        if self._ask_query == query_id:
+            print(len(result), 'pages found')
+            self.loading_meta = False
+            pages_to_load: List[Tuple[page.Page, PageWidget]] = []
+            result.sort(key=lambda i: i.number)
+            for page_meta in result:
+                image = PageWidget()
+                self.pages_grid.add_widget(image)
+                pages_to_load.append((page_meta, image))
+            
+            self._images_get_task = asynctask.AsyncTask(partial(self.load_images, query_id, pages_to_load), None)
+            self._images_get_task.start()
+    
+    def load_images(self, query_id: int, pages_to_load: List[Tuple[page.Page, PageWidget]]):
+        if self._ask_query == query_id:
+            for page_meta, widget in pages_to_load:
+                if self._ask_query != query_id:
+                    break
+                widget.text = str(page_meta.number)
+                image, ext = page_meta.get_image()
+                if image is None:
+                    print(page_meta.number, 'could not be loaded')
+                Clock.schedule_once(lambda *args: widget.load_image(image, ext), 0)
+                # This sleep call may seem uneccessary but it is required
+                # If you try to show too many images in 1 frame it doesn't work, Some error with the scheduler mayber?
+                # This sleep call slows it down, so that everything works
+                sleep(0.5)
+            print('all pages loaded')
+    
+    def go_back_to_manga_screen(self, *args):
+        if self._pages_get_task is not None:
+            self._pages_get_task.cancel_task()
+        if self._images_get_task is not None:
+            self._images_get_task.cancel_task()
         
-        asynctask.AsyncTask(partial(self.load_images, pages_to_load), None).start()
-    
-    def load_images(self, pages_to_load: List[Tuple[page.Page, PageWidget]]):
-        for page_meta, widget in pages_to_load:
-            widget.text = str(page_meta.number)
-            image, ext = page_meta.get_image()
-            if image is None:
-                print(page_meta.number, 'could not be loaded')
-            Clock.schedule_once(lambda *args: widget.load_image(image, ext), 0)
-            # This sleep call may seem uneccessary but it is required
-            # If you try to show too many images in 1 frame it doesn't work, Some error with the scheduler mayber?
-            # This sleep call slows it down, so that everything works
-            sleep(0.5)
-        print('all pages loaded')
+        childs = []
+        for child in self.pages_grid.children:
+            childs.append(child)
+        for child in childs:
+            self.pages_grid.remove_widget(child)
+        
+        Clock.schedule_once(lambda *args: App.get_running_app().go_back_to_manga_screen(), 2)
 
 
 Builder.load_file(ReaderScreen.kv_file)

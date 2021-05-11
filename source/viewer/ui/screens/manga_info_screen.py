@@ -9,6 +9,7 @@ from kivymd.uix.screen import MDScreen
 
 import os
 from io import BytesIO
+from functools import partial
 
 from ...classes import chapter, manga, languages
 from .. import constants
@@ -26,6 +27,9 @@ class MangaInfoScreen(MDScreen):
     chapters_recycleview: ARecycleView = ObjectProperty()
     selected_manga = ObjectProperty(None)
     anim: Animation = None
+    _chapters_task: asynctask.AsyncStreamTask = None
+    _chapters_query_id = 0
+    _chapters: List[chapter.Chapter] = []
 
     def get_cover_image_size(self, width: int):
         cx = width * 0.3
@@ -48,17 +52,22 @@ class MangaInfoScreen(MDScreen):
         self.chapters_recycleview.start_loading()
         self.selected_manga = manga
 
-        asynctask.AsyncTask(manga.get_chapters, self.show_chapters).start()
+        self._chapters = []
+        self._chapters_query_id += 1
+        self._chapters_task = asynctask.AsyncStreamTask(manga.get_chapters, on_update=partial(self.show_chapters, self._chapters_query_id))
+        self._chapters_task.start()
         asynctask.AsyncTask(manga.get_cover_image, self.show_cover_image).start()
     
     def filter(self, chapters: List[chapter.Chapter]) -> List[chapter.Chapter]:
         return [ chapter for chapter in chapters if chapter.language == languages.ENGLISH ]
 
-    def show_chapters(self, chapters: List[chapter.Chapter], time_delta: float) -> List[chapter.Chapter]:
-        filtered_chapters = self.filter(chapters)
-        print('showing', len(filtered_chapters), 'chapters')
-        self.chapters_recycleview.data = [ {'chapter': chapter} for chapter in filtered_chapters ]
-        self.chapters_recycleview.stop_loading()
+    def show_chapters(self, query_id: int, chapters: List[chapter.Chapter], time_delta: float) -> List[chapter.Chapter]:
+        if query_id == self._chapters_query_id:
+            filtered_chapters = [ {'chapter': chapter} for chapter in self.filter(chapters) ]
+            print('showing', len(filtered_chapters), 'chapters')
+            self._chapters += filtered_chapters
+            self.chapters_recycleview.data = self._chapters
+            self.chapters_recycleview.stop_loading()
 
     def show_cover_image(self, image_data: Tuple[BytesIO, str], time_delta: float):
         if image_data is not None:
@@ -75,6 +84,8 @@ class MangaInfoScreen(MDScreen):
         # I am getting rid of the data in the recycleview so that when we come back to this screen
         # it will start fresh
         self.chapters_recycleview.data = []
+        self._chapters_task.cancel_task()
+        self._chapters_query_id += 1
         App.get_running_app().switch_to_sources_screen()
 
 

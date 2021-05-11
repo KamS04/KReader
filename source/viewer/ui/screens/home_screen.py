@@ -3,7 +3,7 @@ from kivy.lang.builder import Builder
 from kivy.properties import ObjectProperty
 from kivy.app import App
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.button import MDRoundFlatButton, MDFlatButton, MDRaisedButton, Button
+from kivymd.uix.button import MDRaisedButton
 
 import os
 
@@ -35,7 +35,7 @@ class HomeScreen(MDScreen):
         # here we can either show the sources home page
         # but we don't have that implemented so instead we're just going to ask it to pick a manga
 
-        App.get_running_app().select_from_source(source)
+        App.get_running_app().show_source(source)
 
 
 Builder.load_file(HomeScreen.kv_file)

@@ -26,7 +26,7 @@ class MangaDexManga(manga.Manga):
     def call_manga_api(uuid: str) -> requests.Response:
         return requests.get(MangaDexManga._manga_api % uuid)
     
-    def call_get_chapters_list(self, manga_uuid, limit=30, offset=0) -> requests.Response:
+    def call_get_chapters_list(self, manga_uuid, limit=20, offset=0) -> requests.Response:
         return requests.get(MangaDexManga._chapter_for_manga_api % (manga_uuid, limit, offset))
 
     def call_chapter_api(self, chapter_uuid: str):
@@ -66,13 +66,8 @@ class MangaDexManga(manga.Manga):
         self.uuid = manga_uuid if manga_uuid else MangaDexManga.get_uuid_from_uri(self.uri)
     
     def get_chapters(self) -> List['chapter.MangaDexChapter']:
-        chapters: List[chapter.MangaDexChapter] = []
-        
         for results in self.gen_chapters_json():
-            for chapter_info in results:
-                chapters.append(chapter.MangaDexChapter.from_data(self, chapter_info))
-        
-        return chapters
+            yield [chapter.MangaDexChapter.from_data(self, chapter_info) for chapter_info in results]
 
     def get_cover_image(self) -> Tuple[BytesIO, str]:
         # Mangadex API doesn't support cover images yet

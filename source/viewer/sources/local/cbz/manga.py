@@ -40,7 +40,7 @@ class CBZManga(manga.Manga):
             for index, chapter_name in enumerate(chapters_names):
                 chapters.append(chapter.CBZChapter.from_uri(chapter_name, self, {'chapter-number': index+1}))
         
-        return chapters
+        yield chapters
 
     def get_cover_image(self) -> Tuple[BytesIO, str]:
         if 'cover_image' in self.get_info().keys():

@@ -1,4 +1,5 @@
 #:import HomeScreen viewer.ui.screens.home_screen.HomeScreen
+#:import SourceScreen viewer.ui.screens.source_screen.SourceScreen
 #:import MangaInfoScreen viewer.ui.screens.manga_info_screen.MangaInfoScreen
 #:import ReaderScreen viewer.ui.screens.reader_screen.ReaderScreen
 #:import hex kivy.utils.get_color_from_hex
@@ -12,15 +13,19 @@ ScreenManager:
             pos: self.pos
 
     HomeScreen:
-        id: sources_screen
-        name: 'sources_screen'
+        id: home_screen
+        name: 'home_screen'
         screen_number: 0
+    SourceScreen:
+        id: source_screen
+        name: 'source_screen'
+        screen_number: 1
     MangaInfoScreen:
         id: manga_info_screen
         name: 'manga_info_screen'
-        screen_number: 1
+        screen_number: 2
     ReaderScreen:
         id: reader_screen
         name: 'reader_screen'
-        screen_number: 2
+        screen_number: 3
 

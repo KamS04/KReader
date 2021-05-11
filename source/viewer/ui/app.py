@@ -45,6 +45,12 @@ class KReader(MDApp):
     resources = os.path.join(BASE_FOLDER, 'res')
     images = os.path.join(resources, 'imgs')
 
+    def get_debug(self) -> bool:
+        return DEBUG
+
+    def get_image(self, file_name):
+        return os.path.join(self.images, file_name)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.pallete = ColorPallete()
@@ -56,8 +62,9 @@ class KReader(MDApp):
     
     def on_start(self):
         self.manga_info_screen = self.root.ids['manga_info_screen']
-        self.sources_screen = self.root.ids['sources_screen']
+        self.home_screen = self.root.ids['home_screen']
         self.reader_screen = self.root.ids['reader_screen']
+        self.source_screen = self.root.ids['source_screen']
         return super().on_start()
 
     def clamp(self, value, min_value, max_value):
@@ -65,24 +72,8 @@ class KReader(MDApp):
 
     def get_sources(*args) -> List[source.Source]:
         return SOURCES
-    
-    def select_from_source(self, source: source.Source):
-        if not self.is_selecting and not self.is_finding:
-            self.is_selecting = True
-            asynctask.AsyncTask(source.choose, partial(self.show_manga_from_uri, source)).start()
 
-    def show_manga_from_uri(self, source: source.Source, uri: str, time_delta: float):
-        self.is_selecting = False
-
-        if DEBUG: print(source, 'selected', uri)
-
-        if uri is not None:
-            self.is_finding = True
-            asynctask.AsyncTask(partial(source.get, uri), self.show_manga).start()
-        else:
-            print('Erorr, NoneType object returned, uri not selected')
-    
-    def show_manga(self, manga: manga.Manga, time_delta):
+    def show_manga(self, manga: manga.Manga, *args):
         if manga is not None:
             if DEBUG: print(manga.title)
 
@@ -91,13 +82,29 @@ class KReader(MDApp):
             self.root.current = self.manga_info_screen.name
         self.is_finding = False
 
+    def go_back_to_manga_screen(self, *args):
+        self.root.transition = SlideTransition(direction='right')
+        self.root.current = self.manga_info_screen.name
+
+    def show_source(self, selected_source: source.Source, *args):
+        self.source_screen.set_source(selected_source)
+        self.go_to_sources_screen()
+
     def switch_to_sources_screen(self, *args):
         self.root.transition = SlideTransition(direction='right')
-        self.root.current = self.sources_screen.name
+        self.root.current = self.source_screen.name
     
-    def show_chapter(self, chapter: chapter.Chapter):
+    def go_to_sources_screen(self, *args):
+        self.root.transition = SlideTransition(direction='left')
+        self.root.current = self.source_screen.name
+
+    def show_chapter(self, chapter: chapter.Chapter, *args):
         print('Showing', chapter.title)
         self.reader_screen.show_chapter(chapter)
         self.root.transition = SlideTransition(direction='left')
         self.root.current = self.reader_screen.name
+
+    def go_back_home(self, *args):
+        self.root.transition = SlideTransition(direction='right')
+        self.root.current = self.home_screen.name
 

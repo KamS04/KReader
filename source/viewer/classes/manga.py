@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Generator
 
 from io import BytesIO
 
@@ -13,7 +13,7 @@ class Manga:
         self.status = status
         self.uri = uri
 
-    def get_chapters(self) -> List['chapter.Chapter']:
+    def get_chapters(self) -> Generator[List['chapter.Chapter'], None, None]:
         ''' Returns a list of chapters associated with this Manga '''
         pass
 
