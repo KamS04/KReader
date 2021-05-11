@@ -30,5 +30,5 @@ else
 fi
 
 source ./venv/bin/activate
-python3 -m pip install -r dist/requirements
+python3 -m pip install -r dist/requirements.txt
 echo installed
