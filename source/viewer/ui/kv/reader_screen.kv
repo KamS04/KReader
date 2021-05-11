@@ -9,6 +9,12 @@
 
 
 <PageWidget>:
+    canvas.before:
+        Color:
+            rgb: hex(app.pallete.reader_background)
+        Rectangle:
+            size: self.size
+            pos: self.pos
     width: self.texture.width if self.texture is not None else 400
     height: min(self.width / self.texture.width * self.texture.height, self.texture.height) if self.texture is not None else 80
     size_hint_y: None
@@ -19,6 +25,12 @@
     pages_grid: pages_grid
 
     FloatLayout:
+        canvas.before:
+            Color:
+                rgb: hex(app.pallete.reader_background)
+            Rectangle:
+                size: self.size
+                pos: self.pos
 
         LoadingCover:
             pos_hint: { 'center_x': 0.5, 'center_y': 0.5 } if self.loading else { 'x': 0, 'y': 0 }
@@ -40,6 +52,12 @@
                 spacing: 0, 0
 
         ImageButton:
+            canvas.before:
+                Color:
+                    rgba: hex(app.pallete.blank_button_down) if self.state == 'down' else hex(app.pallete.blank_button)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
             source: app.get_image('back.png')
             size_hint: 0.05, 0.05
             pos_hint: { 'x': 0.005, 'top': 0.995 }

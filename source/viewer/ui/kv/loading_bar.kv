@@ -1,10 +1,16 @@
-<SHGridLayout>:
-    rows: 1
-    size_hint_x: None
-    width: self.minimum_width
+#:import hex kivy.utils.get_color_from_hex
 
-<SVGridLayout>:
-    cols: 1
-    size_hint_y: None
-    height: self.minimum_height
+
+<LoadingBar>:
+    canvas.after:
+        Color:
+            rgba: hex(app.pallete.colored_highlight) if self.loading else (0, 0, 0, 0)
+        PushMatrix
+        Rotate
+            angle: self.angle
+            origin: self.center
+        Line:
+            width: root.arc_width
+            circle: self.center_x, self.center_y, root.arc_radius, 0, self.arc_angle
+        PopMatrix
 

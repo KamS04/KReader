@@ -12,6 +12,8 @@ class LoadingBar(Widget):
     kv_file = os.path.join( os.getenv(constants.KV_FOLDER), 'loading_bar.kv')
     loading = BooleanProperty()
     arc_angle = NumericProperty(270)
+    arc_width = NumericProperty(4)
+    arc_radius = NumericProperty(35)
     angle = NumericProperty(0)
     anim: Animation = None
 

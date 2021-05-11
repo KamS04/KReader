@@ -28,6 +28,7 @@ class MangaDex(source.Source):
         sy = 75
         px = int((root.winfo_screenwidth() // 2) - (sx // 2))
         py = int((root.winfo_screenheight() // 2) - (sy // 2))
+        root.winfo_toplevel().title('MangaDex')
         root.wm_geometry('%dx%d+%d+%d' % (sx, sy, px, py))
 
         label = tk.Label(root, text='Enter url')

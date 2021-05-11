@@ -4,13 +4,14 @@
 #:import STATUS_MAP viewer.classes.status.STATUS_MAP
 #:import hex kivy.utils.get_color_from_hex
 #:import ChapterWidget viewer.ui.widgets.chapter.ChapterWidget
-#:import ARecycleView viewer.ui.widgets.recycleview.ARecycleView
+#:import LoadingBar viewer.ui.widgets.loading_bar.LoadingBar
 
 
 <MangaInfoScreen>:
     cover_image: cover_image
     md_bg_color: hex(app.pallete.background)
     chapters_recycleview: chapters_recycleview
+    loading_bar: loading_bar
 
     GridLayout:
         cols: 2
@@ -32,6 +33,12 @@
                 background_color: hex('#111111')
             
             ImageButton:
+                canvas.before:
+                    Color:
+                        rgba: hex(app.pallete.blank_button_down) if self.state == 'down' else hex(app.pallete.blank_button)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos            
                 source: app.get_image('back.png')
                 size_hint: 0.05, 0.05
                 pos_hint: { 'x': 0.005, 'top': 0.995 }
@@ -108,15 +115,25 @@
                         halign: 'center'
                         valign: 'center'
 
-        ARecycleView:
-            id: chapters_recycleview
-            viewclass: 'ChapterWidget'
-            
-            RecycleBoxLayout:
-                default_size: None, None
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
-                spacing: 10, 0
+        FloatLayout:
+            LoadingBar:
+                id: loading_bar
+                arc_radius: 15
+                arc_width: 2
+                size_hint: 0.05, 0.05
+                pos_hint: { 'right': 1, 'top': 1 }
+
+            RecycleView:
+                id: chapters_recycleview
+                viewclass: 'ChapterWidget'
+                size_hint: 1, 0.9
+                pos_hint: { 'x': 0, 'y': 0}
+
+                RecycleBoxLayout:
+                    default_size: None, None
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    spacing: 10, 0
 

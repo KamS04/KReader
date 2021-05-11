@@ -1,6 +1,7 @@
 #:import ImageButton viewer.ui.widgets.image.ImageButton
 #:import MangaWidget viewer.ui.widgets.manga.MangaWidget
 #:import LoadingBar viewer.ui.widgets.loading_bar.LoadingBar
+#:import hex kivy.utils.get_color_from_hex
 
 <SourceScreen>:
     search_box: search_box
@@ -10,12 +11,18 @@
     FloatLayout:
         canvas.before:
             Color:
-                rgb: 1, 1, 1
+                rgb: hex('#fefefe')
             Rectangle:
-                size: root.width, root.height * 0.2
-                pos: 0, root.height * 0.8
+                size: root.width, root.height * 0.1
+                pos: 0, root.height * 0.9
         
         ImageButton:
+            canvas.before:
+                Color:
+                    rgba: hex(app.pallete.blank_button_down) if self.state == 'down' else hex(app.pallete.blank_button)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
             source: app.get_image('back.png')
             size_hint: 0.05, 0.05
             pos_hint: { 'x': 0.005, 'top': 0.995 }
@@ -25,16 +32,24 @@
 
         MDTextField:
             id: search_box
-            size_hint: 0.845, 0.1
+            size_hint: 0.745, 0.1
             pos_hint: { 'x': 0.055, 'top': 1 }
             hint_text: 'Search'
     
         LoadingBar:
             id: loading_bar
             size_hint: 0.1, 0.1
-            pos_hint: { 'right': 1, 'top': 0.9}
+            pos_hint: { 'right': 0.9, 'top': 1}
+            arc_radius: 20
+            arc_width: 2
 
         ImageButton:
+            canvas.before:
+                Color:
+                    rgba: hex(app.pallete.blank_button_down) if self.state == 'down' else hex(app.pallete.blank_button)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
             source: app.get_image('search.png')
             size_hint: 0.1, 0.1
             pos_hint: { 'right': 1, 'top': 1}
@@ -45,7 +60,7 @@
         RecycleView:
             id: mangas_recycleview
             viewclass: 'MangaWidget'
-            size_hint: 1, 0.8
+            size_hint: 1, 0.85
             pos_hint: { 'x': 0, 'y': 0}
 
             RecycleBoxLayout:

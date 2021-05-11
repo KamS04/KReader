@@ -54,8 +54,6 @@ class KReader(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.pallete = ColorPallete()
-        self.is_selecting = False
-        self.is_finding = False
     
     def build(self):
         return Builder.load_file(self.kv_file)
@@ -76,11 +74,10 @@ class KReader(MDApp):
     def show_manga(self, manga: manga.Manga, *args):
         if manga is not None:
             if DEBUG: print(manga.title)
-
+            self.source_screen.cancel_search()
             self.manga_info_screen.load_manga(manga)
             self.root.transition = SlideTransition(direction='left')
             self.root.current = self.manga_info_screen.name
-        self.is_finding = False
 
     def go_back_to_manga_screen(self, *args):
         self.root.transition = SlideTransition(direction='right')

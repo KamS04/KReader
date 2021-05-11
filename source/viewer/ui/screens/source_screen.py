@@ -45,9 +45,7 @@ class SourceScreen(MDScreen):
         self.search_box.text = ''
         self._found_mangas = []
         self.mangas_recycleview.data = []
-        if self._search_task is not None:
-            self._search_task.cancel_task()
-            self.query_id = 0
+        self.cancel_search()
         App.get_running_app().go_back_home()
     
     def choose(self, *args):
@@ -71,16 +69,21 @@ class SourceScreen(MDScreen):
         query = self.search_box.text
         print('searching for', query)
         self.mangas_recycleview.data = []
-        self.loading_bar.start_loading()
         if self.selected_source is not None:
-            if self._search_task is not None:
-                self._search_task.cancel_task()
-            self.query_id += 1
+            self.cancel_search()
             self._search_task = asynctask.AsyncStreamTask(partial(self.selected_source.search, query), on_update=partial(self.show_found_mangas, self.query_id), on_finish=self.finish_search)
             self._search_task.start()
-        pass
+            self.loading_bar.start_loading()
     
+    def cancel_search(self, *args):
+        print('cancel')
+        if self._search_task is not None:
+            self._search_task.cancel_task()
+            self.query_id += 1
+            self.loading_bar.stop_loading()
+
     def show_found_mangas(self, query_id: int, mangas: List[manga.Manga], time_delta: float):
+        print('id', query_id, self.query_id)
         if query_id == self.query_id:
             self._found_mangas += [ {'manga': manga} for manga in mangas ]
             self.mangas_recycleview.data = self._found_mangas

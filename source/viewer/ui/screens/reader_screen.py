@@ -88,7 +88,7 @@ class ReaderScreen(MDScreen):
         for child in childs:
             self.pages_grid.remove_widget(child)
         
-        Clock.schedule_once(lambda *args: App.get_running_app().go_back_to_manga_screen(), 2)
+        Clock.schedule_once(lambda *args: App.get_running_app().go_back_to_manga_screen(), 0.1)
 
 
 Builder.load_file(ReaderScreen.kv_file)

@@ -47,7 +47,7 @@ class AsyncStreamTask:
         for result in self.task():
             if self.on_update is not None and not self.is_cancelled:
                 Clock.schedule_once(partial(self.on_update, result), 0)
-        if self.on_finish is not None:
+        if self.on_finish is not None and not self.is_cancelled:
             Clock.schedule_once(self.on_finish, 0)
     
     def cancel_task(self):

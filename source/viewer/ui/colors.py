@@ -10,4 +10,8 @@ class ColorPallete:
 
         self.button_click = '#c2c2c2'
         self.button_border = '#171717'
+        self.blank_button = '#00000000'
+        self.blank_button_down = '#ccc2c2c2'
+
+        self.reader_background = '#6b6b6b'
 
