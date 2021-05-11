@@ -45,5 +45,6 @@ goto :EOF
 :RUN_INSTALL
 call "./venv/scripts/activate.bat"
 python -m pip install -r dist/requirements.txt
+python -m pip install kivy kivymd
 echo Installed
 goto :EOF

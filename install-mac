@@ -31,4 +31,5 @@ fi
 
 source ./venv/bin/activate
 python3 -m pip install -r dist/requirements.txt
+python3 -m pip install kivy kivymd
 echo installed

@@ -1,7 +1,7 @@
 from typing import List
 
 import kivy
-kivy.require('2.0.0')
+#kivy.require('2.0.0')
 
 from kivy.lang.builder import Builder
 from kivy.properties import ObjectProperty
