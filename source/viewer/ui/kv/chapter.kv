@@ -1,6 +1,9 @@
 #:import hex kivy.utils.get_color_from_hex
 
 <ChapterWidget>:
+    size_hint_y: None
+    height: num_label.height + title_label.height + self.divider + self.margin + self.border_size
+
     canvas.before:
         Color:
             rgba: hex(app.pallete.button_border)
@@ -12,31 +15,35 @@
         Color:
             rgba: hex(app.pallete.button_click) if root.state == 'down' else hex(app.pallete.item_background)
         RoundedRectangle:
-            size: self.size[0] - 2, self.size[1] - 2
+            size: self.size[0] - 2, self.size[1] - self.border_size
             pos: self.pos[0], self.pos[1] + 2
             radius: 15, 15, 15, 15
-    
-    FloatLayout:
-        size: root.size
-        pos: root.pos
+        
+        Color:
+            rgb: 1, 0, 0
+        Rectangle:
+            pos: self.pos
+            size: 1, 1
 
-        Label:
-            pos_hint: { 'x': .125, 'top': 1 }
-            size_hint: .975, .7
-            text: f'Chapter {round(root.chapter.chapter_num, 1)} {root.chapter.title}' if root.chapter is not None else ''
-            color: app.pallete.text
-            text_size: self.size
-            halign: 'left'
-            valign: 'center'
-            font_size: 18
+    Label:
+        id: num_label
+        size: root.width - 10, self.texture_size[1]
+        text: f'Chapter {round(root.chapter.chapter_num, 1)} {root.chapter.title}' if root.chapter is not None else ''
+        color: app.pallete.text
+        halign: 'left'
+        valign: 'center'
+        font_size: 18
+        text_size: self.width - 10, None
+        pos: root.pos[0] + 5, root.pos[1] + root.height + root.divider - root.margin//2 - self.texture_size[1]
 
-        Label:
-            pos_hint: { 'x': .125, 'y': 0 }
-            size_hint: .975, .3
-            text: ', '.join(root.chapter.groups) if root.chapter is not None else ''
-            color: app.pallete.text
-            halign: 'left'
-            valign: 'center'
-            text_size: self.size
-            font_size: 12
+    Label:
+        id: title_label
+        size: root.width - 10, self.texture_size[1]
+        text: ', '.join(root.chapter.groups) if root.chapter is not None else ''
+        color: app.pallete.text
+        halign: 'left'
+        valign: 'center'
+        font_size: 18
+        text_size: self.width - 10, None
+        pos: root.pos[0] + 5, root.pos[1] + root.margin//2
 

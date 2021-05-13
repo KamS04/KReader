@@ -32,6 +32,7 @@ class MangaInfoScreen(MDScreen):
     _chapters_task: asynctask.AsyncStreamTask = None
     _chapters_query_id = 0
     _chapters: List[chapter.Chapter] = []
+    _error_image = None
 
     def get_cover_image_size(self, width: int):
         cx = width * 0.3
@@ -78,8 +79,14 @@ class MangaInfoScreen(MDScreen):
         if image_data is not None:
             self.cover_image.load_image(*image_data)
         else:
-            print('Image is None')
-            self.cover_image.stop_loading()
+            print('Cover Image is None')
+            asynctask.AsyncTask(self.read_image_error, on_finish=self.show_cover_image).start()
+    
+    def read_image_error(self) -> Tuple[BytesIO, str]:
+        if self._error_image is None:
+            filename = App.get_running_app().get_image('no-cover.png')
+            self._error_image = BytesIO(open(filename, 'rb').read())
+        return [self._error_image, 'png']
     
     def cancel_chapters(self, *args):
         if self._chapters_task is not None:

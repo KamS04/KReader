@@ -1,6 +1,9 @@
 #:import hex kivy.utils.get_color_from_hex
 
 <MangaWidget>:
+    size_hint_y: None
+    height: title_label.height + alt_label.height + self.margin + self.border_size
+
     canvas.before:
         Color:
             rgba: hex(app.pallete.button_border)
@@ -12,31 +15,31 @@
         Color:
             rgba: hex(app.pallete.button_click) if root.state == 'down' else hex(app.pallete.item_background)
         RoundedRectangle:
-            size: self.size[0] - 2, self.size[1] - 2
+            size: self.size[0] - 2, self.size[1] - self.border_size
             pos: self.pos[0], self.pos[1] + 2
             radius: 15, 15, 15, 15
-    
-    FloatLayout:
-        size: root.size
-        pos: root.pos
 
-        Label:
-            pos_hint: { 'x': .125, 'top': 1 }
-            size_hint: .975, .7
-            text: root.manga.title if root.manga is not None else ''
-            color: app.pallete.text
-            text_size: self.size
-            halign: 'left'
-            valign: 'center'
-            font_size: 18
+    Label:
+        id: title_label
+        size_hint_y: None
+        height: self.texture_size[1]
+        text: root.manga.title if root.manga is not None else ''
+        color: app.pallete.text
+        halign: 'left'
+        valign: 'center'
+        font_size: 26
+        text_size: self.width - 20, None
+        pos: root.pos[0] + 10, root.pos[1] + root.height - root.margin//2 - self.texture_size[1]
 
-        Label:
-            pos_hint: { 'x': .125, 'y': 0 }
-            size_hint: .975, .3
-            text: ', '.join(root.manga.alt_titles) if root.manga is not None else ''
-            color: app.pallete.text
-            halign: 'left'
-            valign: 'center'
-            text_size: self.size
-            font_size: 12
+    Label:
+        id: alt_label
+        size_hint_y: None
+        height: self.texture_size[1]
+        text: ', '.join(root.manga.alt_titles) if root.manga is not None else ''
+        color: app.pallete.text
+        halign: 'left'
+        valign: 'center'
+        font_size: 11
+        text_size: self.width - 20, None
+        pos: root.pos[0] + 10, root.pos[1] + root.margin // 2
 

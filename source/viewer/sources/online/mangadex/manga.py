@@ -5,6 +5,7 @@ from io import BytesIO
 import requests
 import json
 import os
+import html
 
 from ....classes import manga
 from . import chapter
@@ -13,6 +14,20 @@ from .maps import LANGUAGE_MAP, STATUS_MAP
 #             <    http   ><      website      ><website endpoint><        api           ><                               uuid                                           >< extra bits (normally title) >                        
 url_regex = r'(http(s?)://)?(((www\.)?mangadex.org/(manga|title)/)|api.mangadex.org/manga/)[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(/.*|/)?'
 uuid_regex = r'[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}'
+
+NO_IMAGES_FILE = os.path.join( os.path.dirname(__file__), 'cover.png' )
+EXT = 'png'
+
+_COVER = None
+
+def load_cover_image() -> Tuple[BytesIO, str]:
+    global _COVER
+    if _COVER is None:
+        file = open(NO_IMAGES_FILE, 'rb')
+        _COVER = BytesIO(file.read())
+    return _COVER, EXT
+
+
 
 class MangaDexManga(manga.Manga):
     match_query: Pattern = re.compile(url_regex)
@@ -36,8 +51,9 @@ class MangaDexManga(manga.Manga):
         return MangaDexManga.uuid_query.findall(uri)[0]
     
     def get_authors(*author_uuids: str) -> List[str]:
-        query_params = '&'.join( 'ids=[]' + uuid for uuid in author_uuids )
+        query_params = '&'.join( 'ids[]=' + uuid for uuid in author_uuids )
         url = MangaDexManga._authors_api_endpoint + query_params + '&limit=%d' % len(author_uuids) # I'm assuming there's going to be less than 100 authors
+        print(*author_uuids, url)
         req = requests.get(url)
         
         if req.status_code == 200:
@@ -71,7 +87,7 @@ class MangaDexManga(manga.Manga):
 
     def get_cover_image(self) -> Tuple[BytesIO, str]:
         # Mangadex API doesn't support cover images yet
-        return None
+        return load_cover_image()
     
     def from_data(data: dict, uri: str=None, uuid: str=None) -> 'MangaDexManga':   
         if uuid is None:
@@ -79,9 +95,9 @@ class MangaDexManga(manga.Manga):
         if uri is None:
             uri = MangaDexManga._manga_api % uuid
 
-        alt_titles = [ title['en'] for title in data['data']['attributes']['altTitles'] if 'en' in title.keys()]
+        alt_titles = [ html.unescape( title['en'] ) for title in data['data']['attributes']['altTitles'] if 'en' in title.keys()]
         status = STATUS_MAP[ data['data']['attributes']['status'] ]
-        title = data['data']['attributes']['title']['en']
+        title = html.unescape( data['data']['attributes']['title']['en'] )
 
         # this is a set because sometimes the author and artist is the same but is listed twice, but I don't want duplicate uuids
         author_uuids = { rel['id'] for rel in data['relationships'] if rel['type'] == 'author' or rel['type'] == 'artist' }

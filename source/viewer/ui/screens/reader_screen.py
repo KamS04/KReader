@@ -55,7 +55,7 @@ class ReaderScreen(MDScreen):
             for page_meta in result:
                 image = PageWidget()
                 self.pages_grid.add_widget(image)
-                pages_to_load.append((page_meta, image))
+                pages_to_load.append((page_meta, None))
             
             self._images_get_task = asynctask.AsyncTask(partial(self.load_images, query_id, pages_to_load), None)
             self._images_get_task.start()
@@ -65,7 +65,6 @@ class ReaderScreen(MDScreen):
             for page_meta, widget in pages_to_load:
                 if self._ask_query != query_id:
                     break
-                widget.text = str(page_meta.number)
                 image, ext = page_meta.get_image()
                 if image is None:
                     print(page_meta.number, 'could not be loaded')

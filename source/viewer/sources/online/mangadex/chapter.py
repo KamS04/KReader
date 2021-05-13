@@ -36,7 +36,7 @@ class MangaDexChapter(chapter.Chapter):
         return MangaDexChapter._uuid_query.findall(uri)[0]
 
     def get_groups(*group_uuids: str) -> List[str]:
-        query_params = '&'.join( 'ids=[]' + uuid for uuid in group_uuids )
+        query_params = '&'.join( 'ids[]=' + uuid for uuid in group_uuids )
         url = MangaDexChapter._groups_api_endpoint + query_params + '&limit=%d' % len(group_uuids) # I'm assuming there's going to be less than 100 groups
         req = requests.get(url)
         

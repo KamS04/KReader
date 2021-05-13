@@ -1,6 +1,6 @@
 from ....classes import status, languages, map
 
-STATUS_MAP = {
+_STATUS_MAP = {
     'ongoing': status.ONGOING,
     'hiatus': status.HIATUS,
     'completed': status.COMPLETED,
@@ -12,3 +12,5 @@ _LANGUAGE_MAP = {
 }
 
 LANGUAGE_MAP = map.DefaultingMap(_LANGUAGE_MAP, languages.UNKNOWN)
+
+STATUS_MAP = map.DefaultingMap(_STATUS_MAP, status.UNKNOWN)
