@@ -36,7 +36,7 @@ if [ "$(uname)" == "Linux" ]
 then
     echo It seems your on Linux
     echo You will need to install tkinter by yourself
-    echo For example use "sudo apt-get install pythonh3-tk" for Debian based Distributions
+    echo For example use "sudo apt-get install python3-tk" for Debian based Distributions
     echo Use "sudo dnf install python3-tkinter" for Fedora based Distributions
     echo If you are not on one of these, I am sorry, but that is now your problem
 echo installed
