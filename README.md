@@ -10,7 +10,21 @@ Desktop Manga/Webtoon Reader
 
 ****
 
-Installation Instructions
+## Update Instructions
+
+### Non-Technical Method
+
+1. Download the new files to a new location
+2. Find the folder called ```source```
+3. Replace the old ```source``` folder with the new ```source``` folder. Everything should work.
+    - If this doesn't work, just delete everything and download + install again.
+
+### Using Git
+Just pull the new repository.
+
+***
+
+## Installation Instructions
 
 1. Download and Install Python 3
     - You can download it here: [Python 3](https://www.python.org/downloads/)
@@ -30,7 +44,7 @@ Installation Instructions
      If this gives an error then download [this file](https://bootstrap.pypa.io/get-pip.py) and run it with python.
 3. Download the repository and unzip it.
     - Click on the green *Code* button
-5. Run the install script. 
+4. Run the install script. 
     - For windows users, run ```install-win.bat``` (Either double click on the file or run it in a command prompt)
     - For MacOS or Linux users, run ```install-mac```  (Either double click on the file or run it in a terminal)
         - In the terminal run it with the following command
@@ -46,7 +60,7 @@ Installation Instructions
         ```
         sudo dnf install python3-tkinter
         ```
-6. Run the KReader script
+5. Run the KReader script
     - For windows users, run ```KReader-win.bat```
     - For MacOS or Linux, run ```KReader-mac```
         - In the terminal run it with the following command

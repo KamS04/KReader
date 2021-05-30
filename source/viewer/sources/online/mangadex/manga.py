@@ -53,7 +53,6 @@ class MangaDexManga(manga.Manga):
     def get_authors(*author_uuids: str) -> List[str]:
         query_params = '&'.join( 'ids[]=' + uuid for uuid in author_uuids )
         url = MangaDexManga._authors_api_endpoint + query_params + '&limit=%d' % len(author_uuids) # I'm assuming there's going to be less than 100 authors
-        print(*author_uuids, url)
         req = requests.get(url)
         
         if req.status_code == 200:

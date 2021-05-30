@@ -68,8 +68,7 @@ class ReaderScreen(MDScreen):
                 image, ext = page_meta.get_image()
                 if image is None:
                     print(page_meta.number, 'could not be loaded')
-                Clock.schedule_once(lambda *args: widget.load_image(image, ext), 0)
-                #Clock.schedule_once(partial(self.display_image, image, ext, widget), 0)
+                Clock.schedule_once(partial(self.display_image, image, ext, widget), 0)
                 # This sleep call may seem uneccessary but it is required
                 # If you try to show too many images in 1 frame it doesn't work, Some error with the scheduler mayber?
                 # This sleep call slows it down, so that everything works
@@ -77,9 +76,8 @@ class ReaderScreen(MDScreen):
             print('all pages loaded')
     
     def display_image(self, image: BytesIO, ext: str, widget: AImage, *args):
-        #if widget is not None:
-        print('disp')
-        widget.load_image(image, ext)
+        if widget is not None:
+            widget.load_image(image, ext)
 
     def go_back_to_manga_screen(self, *args):
         if self._pages_get_task is not None:

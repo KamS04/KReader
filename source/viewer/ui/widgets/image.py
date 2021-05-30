@@ -19,7 +19,7 @@ class ImageButton(ButtonBehavior, Image):
 class AImage(LoadingBar, ImageButton):
     kv_file = os.path.join( os.getenv(constants.KV_FOLDER), 'image.kv')
     background_color = ColorProperty()
-    clickable = BooleanProperty()
+    clickable = BooleanProperty(False)
     image_bytes: BytesIO = None
     image_ext: str = None
 
@@ -33,6 +33,7 @@ class AImage(LoadingBar, ImageButton):
         coreimage = CoreImage(self.image_bytes, ext=self.image_ext)
         self.texture = coreimage.texture
         self.stop_loading()
+        return coreimage.texture.size
     
     def reset(self):
         self.texture = None

@@ -31,6 +31,6 @@ class CBZ(Source):
         return CBZManga.from_uri(uri) if verify(uri) else None
 
     def search(query: str) -> Generator[List['manga.Manga'], None, None]:
-        #yield [ CBZManga('Title %d' % i, ['Author %d' % i] * 3, ['Title %d' % i* 10] * 20, 1, 'D:/Linux') for i in range(30) ]
-        pass
+        yield [ CBZManga('Title %d' % i, ['Author %d' % i] * 3, ['Title %d' % i* 10] * 20, 1, 'D:/Linux') for i in range(30) ]
+        #pass
 

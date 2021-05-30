@@ -1,6 +1,6 @@
 #:import LoadingBar viewer.ui.widgets.loading_bar.LoadingBar
 #:import hex kivy.utils.get_color_from_hex
-
+#:import ScrollViewNoStutter viewer.ui.widgets.scrollview.ScrollViewNoStutter
 
 <LoadingCover@LoadingBar>:
     loading: False
@@ -37,9 +37,11 @@
             size_hint: (1, 1) if self.loading else (0, 0)
             loading: root.loading_meta    
     
-        ScrollView:
+        ScrollViewNoStutter:
+            id: scroller
             size_hint: 1, 1
             pos_hint: { 'center_x': 0.5, 'center_y': 0.5 }
+            scroll_wheel_distance: root.height // 4
 
             MDGridLayout:
                 id: pages_grid

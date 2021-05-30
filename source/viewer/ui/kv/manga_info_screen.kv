@@ -45,6 +45,7 @@
                     width: self.texture.size[0] / self.texture.size[1] * self.height if self.texture is not None else root.width * 0.9
                     pos_hint: { 'center_x': 0.5, 'top': 0.975}
                     background_color: hex('#111111')
+                    clickable: True
                 
                 ImageButton:
                     canvas.before:
