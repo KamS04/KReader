@@ -37,6 +37,9 @@ class MangaDexManga(manga.Manga):
     _chapter_for_manga_api = _base_api + 'chapter?manga=%s&limit=%d&offset=%d'
     _chapter_api = _base_api + 'chapter/%s'
     _authors_api_endpoint = _base_api + 'author?'
+    _cover_art_api = _base_api + 'cover?manga=%s&order[createdAt]=desc'
+    _cover_art_api_direct = _base_api + 'cover/%s'
+    _cover_art_url = 'https://uploads.mangadex.org/covers/%s/%s.512.jpg'
 
     def call_manga_api(uuid: str) -> requests.Response:
         return requests.get(MangaDexManga._manga_api % uuid)
@@ -62,6 +65,26 @@ class MangaDexManga(manga.Manga):
             return authors
         return []
 
+    def get_cover_image_file_from_manga(uuid):
+        req = requests.get(MangaDexManga._cover_art_api % uuid)
+
+        if req.status_code == 200:
+            data = json.loads(req.content)
+            if data['total'] > 0:
+                cover_art_id = data['results'][0]['data']['id']
+                file_name = data['results'][0]['data']['attributes']['fileName']
+                return cover_art_id, file_name
+        return None, None
+
+    def get_cover_image_file_from_uuid(uuid):
+        req = requests.get(MangaDexManga._cover_art_api_direct % uuid)
+
+        if req.status_code == 200:
+            data = json.loads(req.content)
+            if data['result'] == 'ok':
+                return data['data']['attributes']['fileName']
+        return None
+
     def gen_chapters_json(self) -> Generator[List[dict], None, None]:
         offset = 0
         while True:
@@ -75,24 +98,42 @@ class MangaDexManga(manga.Manga):
                 if offset >= total:
                     break
 
-
-    def __init__(self, title: str, authors: List[str], alt_titles: List[str], status: int, uri: str, manga_uuid: int = None):
+    def __init__(self, title: str, authors: List[str], alt_titles: List[str], status: int, uri: str, manga_uuid: str = None, cover_art_uuid: str = None, cover_art_file_name: str = None):
         super().__init__(title, authors, alt_titles, status, uri)
         self.uuid = manga_uuid if manga_uuid else MangaDexManga.get_uuid_from_uri(self.uri)
+        self._cover_art_uuid = cover_art_uuid
+        self._cover_art_filename = cover_art_file_name
     
     def get_chapters(self) -> List['chapter.MangaDexChapter']:
         for results in self.gen_chapters_json():
             yield [chapter.MangaDexChapter.from_data(self, chapter_info) for chapter_info in results]
 
+    def get_cover_art_filename(self):
+        if self._cover_art_uuid is None:
+            self._cover_art_uuid, self._cover_art_filename = MangaDexManga.get_cover_image_file_from_manga(self.uuid)
+        else:
+            self._cover_art_filename = MangaDexManga.get_cover_image_file_from_uuid(self._cover_art_uuid)
+
     def get_cover_image(self) -> Tuple[BytesIO, str]:
+        if self._cover_art_filename is None:
+            self.get_cover_art_filename()
         # Mangadex API doesn't support cover images yet
-        return load_cover_image()
+        if self._cover_art_filename is not None:
+            url = MangaDexManga._cover_art_url % (self.uuid, self._cover_art_filename)
+            req = requests.get(url)
+            if req.ok:
+                data = BytesIO(req.content)
+                return data, 'jpg'
+        return None
     
     def from_data(data: dict, uri: str=None, uuid: str=None) -> 'MangaDexManga':   
         if uuid is None:
             uuid = data['data']['id']
         if uri is None:
             uri = MangaDexManga._manga_api % uuid
+
+        cover_art = [ relation for relation in data['relationships'] if relation['type'] == 'cover_art' ]
+        cover_art = cover_art[0]['id'] if cover_art else None
 
         alt_titles = [ html.unescape( title['en'] ) for title in data['data']['attributes']['altTitles'] if 'en' in title.keys()]
         status = STATUS_MAP[ data['data']['attributes']['status'] ]
@@ -102,7 +143,7 @@ class MangaDexManga(manga.Manga):
         author_uuids = { rel['id'] for rel in data['relationships'] if rel['type'] == 'author' or rel['type'] == 'artist' }
         authors = MangaDexManga.get_authors(*author_uuids)
 
-        return MangaDexManga(title, authors, alt_titles, status, uri, uuid)
+        return MangaDexManga(title, authors, alt_titles, status, uri, uuid, cover_art)
 
     def from_uri(uri: str) -> 'MangaDexManga':
         if MangaDexManga.match_query.match(uri):

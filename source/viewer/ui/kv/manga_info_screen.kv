@@ -38,11 +38,12 @@
                     pos: self.pos
             
             FloatLayout:
-                
+                id: info_layout
+
                 AImage:
                     id: cover_image
                     size_hint: None, 1
-                    width: self.texture.size[0] / self.texture.size[1] * self.height if self.texture is not None else root.width * 0.9
+                    width: self.texture.size[0] / self.texture.size[1] * self.height if self.texture is not None else info_layout.width * 0.6
                     pos_hint: { 'center_x': 0.5, 'top': 0.975}
                     background_color: hex('#111111')
                     clickable: True
