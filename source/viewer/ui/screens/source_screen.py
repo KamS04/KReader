@@ -76,7 +76,6 @@ class SourceScreen(MDScreen):
             self.loading_bar.start_loading()
     
     def cancel_search(self, *args):
-        print('cancel')
         if self._search_task is not None:
             self._search_task.cancel_task()
             self.query_id += 1
