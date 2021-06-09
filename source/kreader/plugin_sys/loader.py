@@ -5,7 +5,7 @@ import pkgutil
 
 from . import Plugin
 from .. import source_sdk
-from ..source_sdk.config import Configurable, OutdatedConfigurableException
+from ..config_sys import Configurable, OutdatedConfigurableException
 
 def create_plugin_key(plugin, module):
     return module.__path__[0] + ' # ' + plugin.name

@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractproperty, abstractmethod
-from ..source_sdk.config import Configurable
+from ..config_sys import Configurable
 
 
 class Plugin(metaclass=ABCMeta):
