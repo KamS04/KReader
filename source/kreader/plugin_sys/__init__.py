@@ -3,38 +3,54 @@ from ..config_sys import Configurable
 
 
 class Plugin(metaclass=ABCMeta):
+    '''Plugin base class that defines fucntions required by the loader
+        Let your plugin derive from this and extend it to include the functions you need
+    '''
     @abstractproperty
     def name(self):
-        pass
-
-    @abstractproperty
-    def can_sign_in(self):
+        '''Name of the plugin used to identify the plugin's save data'''
         pass
 
     @abstractmethod
     def request_configurable(self):
+        '''Return the configurable class as well as its version'''
         return None, None
     
     def upgrade_configuration(self, previous_config, config_version):
+        '''The configuration found in the prefs file was outdated, try to update it'''
         return None
     
     @property
     def configuration(self) -> Configurable:
+        '''The configuration object of the plugin'''
         return None
     
     @configuration.setter
     def configuration(self, configuration):
+        '''In case the plugin wants to verify that the configuration is usable'''
         pass
     
     def get_editable_configuration(self):
+        '''Used to edit the configurable so that no changes are applied before the the setter is called'''
         if self.configuration is not None:
             return self.configuration.copy()
         return None
     
-    @abstractmethod
-    def execute(self):
-        pass
-    
     def __str__(self):
         return self.name
 
+
+class ConfigurablePlugin(Plugin):
+    '''Plugin base class that assumes a configurable will exist
+        and sets up the required private and public properties
+        DOES NOT DO ANY FORM OF CONFIGURATION VALIDATION
+    '''    
+    _configurable = None
+    
+    @property
+    def configuration(self) -> Configurable:
+        return self._configurable
+    
+    @configuration.setter
+    def configuration(self, configuration) -> Configurable:
+        self._configuration = configuration

@@ -4,7 +4,7 @@ import os
 import pkgutil
 
 from . import Plugin
-from .. import source_sdk
+from .. import source_utils
 from ..config_sys import Configurable, OutdatedConfigurableException
 
 def create_plugin_key(plugin, module):
@@ -21,8 +21,8 @@ def load_plugins(*pacakge_paths, debug=True):
             print('registering', plugin)
         plugins.append(plugin)
     
-    old_register = source_sdk.register
-    source_sdk.register = _register # now any module using the register function will use the custom register function
+    old_register = source_utils.register
+    source_utils.register = _register # now any module using the register function will use the custom register function
 
     parent_dirs = {}
     for package_path in pacakge_paths:
@@ -41,7 +41,7 @@ def load_plugins(*pacakge_paths, debug=True):
             module = spec.loader.load_module(name)
             modules.append(module)
         
-    source_sdk.register = old_register # reset the register function so no new plugins can be registered
+    source_utils.register = old_register # reset the register function so no new plugins can be registered
 
     modules_map = { module.__name__: module for module in modules }
     plugin_module_map = { plugin: modules_map[plugin.__module__] for plugin in plugins }
