@@ -31,7 +31,7 @@ class Source(metaclass=ABCMeta):
         pass
 
     @abstractmethod    
-    def manga_to_data(self, manga: 'models.Manga'):
+    def manga_to_data(self, manga: 'models.Manga') -> dict:
         '''Turn the object into a a dictionary to be saved to persistent storage
             Note, chapter data should also be saved here
         '''
@@ -40,7 +40,6 @@ class Source(metaclass=ABCMeta):
     @abstractmethod
     def manga_from_data(self, data: dict) -> 'models.Manga':
         '''Create a Manga object from saved data
-            Note, chapters should also be initialized from this saved data
         '''
         pass
 
@@ -52,6 +51,11 @@ class Source(metaclass=ABCMeta):
     @abstractmethod
     def fetch_chapters(self, manga: 'models.Manga') -> Generator[List['models.Chapter'], None, None]:
         '''Fetch a list of chapters associated with this Manga'''
+        pass
+
+    @abstractmethod
+    def chapters_to_data(self, chapter: 'models.Chapter') -> dict:
+        '''Turn chapter to data that can be saved'''
         pass
 
     @abstractmethod

@@ -85,11 +85,13 @@ def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: d
 
             plugin.configuration = configuration
         
+        plugin._unique_key = plugin_key
+
         plugins.append(plugin)
     
     return plugins
 
-def convert_to_data(plugin: Plugin, module):
+def convert_to_data(plugin: Plugin):
     configurable, version = plugin.request_configurable()
 
     if configurable is None:
@@ -98,5 +100,5 @@ def convert_to_data(plugin: Plugin, module):
     configuration = plugin.configuration
     config = configuration.data
     data = { 'version': version, 'config': config }
-    plugin_key = create_plugin_key(plugin, module)
+    plugin_key = plugin._unique_key
     return plugin_key, data

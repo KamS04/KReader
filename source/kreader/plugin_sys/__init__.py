@@ -3,6 +3,7 @@ from ..config_sys import Configurable
 
 
 class Plugin(metaclass=ABCMeta):
+    _unique_key: str = None
     '''Plugin base class that defines fucntions required by the loader
         Let your plugin derive from this and extend it to include the functions you need
     '''
