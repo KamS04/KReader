@@ -2,10 +2,10 @@ import os
 import zipfile
 
 
-def install_plugin(package_path: str, plugin_path: str):
+def install_plugin(destination_path: str, plugin_path: str):
     plugin_name = os.path.basename(plugin_path) # assuming .zip file
     plugin_dirname = plugin_name.split('.')[0]
-    plugin_dir = tmp_plugin_dir = os.path.join(package_path, plugin_dirname)
+    plugin_dir = tmp_plugin_dir = os.path.join(destination_path, plugin_dirname)
 
     idx = 0
     while True:
