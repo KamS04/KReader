@@ -108,7 +108,7 @@ def manager_function(tasks_queue: queue.Queue, results_queue: queue.Queue, kill_
             except Exception as e:
                 raise e
     
-    return 
+    return
 
 def start_manager_thread(tasks_queue: queue.Queue, results_queue: queue.Queue, kill_queue: queue.Queue, debug=True):
     manager_thread = threading.Thread(target=manager_function, args=(tasks_queue, results_queue, kill_queue, debug), daemon=True)

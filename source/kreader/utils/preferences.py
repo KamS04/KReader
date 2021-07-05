@@ -75,7 +75,7 @@ class PreferencesManager(object):
     def direct_dump(self, data):
         self._changes_made = True
         self._cached_data = data
-        self.dumps_changes()
+        self.dump_changes()
     
     @property
     def _cached(self):
