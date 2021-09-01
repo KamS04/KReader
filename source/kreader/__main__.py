@@ -8,6 +8,9 @@ CONFIG_FILE_PATH = os.path.join(CURR_DIR, 'kprefs.dll')
 os.environ[constants.CONFIG_KEY] = CONFIG_FILE_PATH
 os.environ[constants.DEBUG_KEY] = str(True)
 
-if __name__ == '__main__':
+def main():
     from .ui import app
     asyncio.run(app.main())
+
+if __name__ == '__main__':
+    main()
