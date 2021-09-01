@@ -108,9 +108,8 @@ class Handler:
         return AwaitableItem(completion_event, cancel_event, communication_queue)
 
     @staticmethod
-    def create_handler(cls, name, *args, **kwargs):
-        new_handler = super(Handler, cls).__new__(cls, *args, **kwargs)
-        new_handler.__init__(name)
+    def create_handler(name):
+        new_handler = Handler(name)
         init_event = threading.Event()
         new_handler.set_init_event(init_event)
         return new_handler, init_event
@@ -142,7 +141,7 @@ async def init_handlers(handler_names, handler_cls=None, debug=False) -> List[Ha
     handlers = {}
     for name in handler_names:
         cls_to_instantiate = handler_cls.get(name, Handler)
-        handlers[name] = cls_to_instantiate(name)
+        handlers[name] = cls_to_instantiate.create_handler(name)
     
     threads = { name: threading.Thread(target=handler.init, daemon=True) for name, (handler, _) in handlers.items() }
 
