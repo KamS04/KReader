@@ -4,11 +4,12 @@ from kivy.lang import Builder
 import threading
 import os
 
+from .. import thread_sys
 from ..utils.preferences import PreferencesManager
 from .. import source_utils
-from .thread_controller import LocalThreadController
 
 from . import constants
+from . import handlers
 
 def get_prefs(config_file):
     prefs = PreferencesManager(config_file)
@@ -24,6 +25,8 @@ DEBUG = bool( os.getenv(constants.DEBUG_KEY) )
 FILE_PATH = os.path.abspath(__file__)
 BASE_FOLDER = os.path.dirname(FILE_PATH)
 KV_FOLDER = os.path.join(BASE_FOLDER, 'kv')
+PREFERENCE_LOCK = threading.Lock()
+APP: 'KReader' = None
 
 os.environ[constants.KV_FOLDER] = KV_FOLDER
 
@@ -41,16 +44,27 @@ class KReader(MDApp):
     def on_start(self):
         self._prefs = get_prefs(CONFIG_FILE_PATH)
         source_utils.get_prefs = lambda: self.prefs # Now everyone can acces the Preferences
-        self.thread_manager = LocalThreadController(DEBUG)
-        self.thread_manager.start_manager()
     
     @property
     def prefs(self):
-        with threading.Lock():
+        with PREFERENCE_LOCK:
             return self._prefs
 
     def get_color(self, colour_name):
         return self.prefs.colours[colour_name]
+
+
+async def main():
+    global APP
+    try:
+        await handlers.initialize_handlers()
+
+        APP = KReader()
+        await APP.async_run(async_lib='asyncio')
+    except KeyboardInterrupt:
+        exit(1)
+    
+    exit(0)
 
 # No __name__ == __main__ because this file should never be
 # ran directly, it needs environment variables
