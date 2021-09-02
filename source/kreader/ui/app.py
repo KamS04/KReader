@@ -1,12 +1,15 @@
+import asyncio
+
 from kivymd.app import MDApp
 from kivy.lang import Builder
 
 import threading
 import os
 
-from .. import thread_sys
 from ..utils.preferences import PreferencesManager
 from .. import source_utils
+from ..plugin_sys import loader
+from ..utils import sources
 
 from . import constants
 from . import handlers
@@ -44,15 +47,25 @@ class KReader(MDApp):
     def on_start(self):
         self._prefs = get_prefs(CONFIG_FILE_PATH)
         source_utils.get_prefs = lambda: self.prefs # Now everyone can acces the Preferences
-    
+        def _get_install_dir() -> str:
+            plugin_install_directory = self.prefs.plugin_install_directory
+            if plugin_install_directory is None:
+                plugin_install_directory = os.path.join( os.path.dirname(BASE_FOLDER), 'plugins')
+                self.prefs.edit.plugin_install_directory = plugin_install_directory
+                self.prefs.dump_changes()
+            return plugin_install_directory
+        source_utils.get_install_directory = _get_install_dir
+        sources.create_now()
+        asyncio.create_task(sources.SOURCEMANAGER.load_sources())
+
+
     @property
-    def prefs(self):
+    def prefs(self) -> PreferencesManager:
         with PREFERENCE_LOCK:
             return self._prefs
 
     def get_color(self, colour_name):
         return self.prefs.colours[colour_name]
-
 
 async def main():
     global APP

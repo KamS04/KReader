@@ -17,5 +17,7 @@ DEFAULT_PREFS = {
 
         'reader_background': '#6b6b6b',
     },
-    'plugins': {}
+    'plugin_data': {},
+    'plugin_paths': [],
+    'plugin_install_directory': None
 }

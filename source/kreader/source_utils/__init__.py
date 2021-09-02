@@ -1,5 +1,10 @@
-def register(plugin):
-    print(plugin, 'Register is being accessed before/after plugins are loaded')
+from ..utils.preferences import PreferencesManager
 
-def get_prefs():
-    print('No preference manager setup yet')
+def register(plugin):
+    raise Exception(f'{plugin} is accessing Register before/after plugins are loaded')
+
+def get_prefs() -> PreferencesManager:
+    raise Exception('No preference manager setup yet')
+
+def get_install_directory() -> str:
+    raise Exception('No Install directory specified')
