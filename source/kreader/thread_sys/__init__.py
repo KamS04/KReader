@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Dict
+from typing import Callable, List, NamedTuple, Dict, Tuple
 import asyncio
 import threading
 import queue
@@ -115,7 +115,7 @@ class Handler:
         return new_handler, init_event
 
 
-def run_in_handler(handler: Handler, func: Callable):
+def run_in_handler(handler: Handler, func: Callable, communicaton: Tuple[asyncio.Event, asyncio.Queue] = None):
     '''
     Throws a function onto a handler
     It is assumed that the function being run is synchronous
@@ -123,10 +123,12 @@ def run_in_handler(handler: Handler, func: Callable):
     '''
     async def curr_thread_task():
         async def other_thread_task():
-            func()
+            return func()
         # The other_thread_task is not called here because then
         # it would be run on the current thread
-        await handler(other_thread_task)
+        result = await handler(other_thread_task)
+        if communicaton is not None:
+            communicaton[1].put_nowait()
     asyncio.create_task(curr_thread_task())
 
 async def init_handlers(handler_names, handler_cls=None, debug=False) -> List[HandlerItem]:
