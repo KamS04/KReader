@@ -1,4 +1,3 @@
-from source.kreader.classes.source import Source
 from types import ModuleType
 from typing import Dict, List, Type
 
@@ -7,6 +6,7 @@ from functools import partial
 from .. import source_utils
 from ..plugin_sys import Plugin, loader
 from ..ui import handlers
+from ..classes.source import Source
 
 SOURCEMANAGER: 'SourceManager' = None
 
@@ -31,11 +31,12 @@ class SourceManager:
 
     async def load_sources(self):
         plugins, plugins_classes, modules, plugin_module_map = await handlers.PROCESSING( partial(self._load_plugins_from_paths, self.paths) )
+        print('received plugins from other thread')
         self.add_plugins(plugins, plugins_classes, modules, plugin_module_map)
     
     async def _load_plugins_from_paths(self, paths):
-        plugin_classes, modules, plugin_module_map = loader.load_plugins(paths, check_class=lambda cls: issubclass(cls, Source) )
-
+        plugin_classes, modules, plugin_module_map = loader.load_plugins(*paths, check_class=lambda cls: issubclass(cls, Source) )
+        print('loaded plugins from files')
         plugins = loader.initialize_plugins(
             plugin_classes, 
             plugin_module_map, 

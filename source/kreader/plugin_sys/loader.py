@@ -14,7 +14,7 @@ def create_plugin_key(plugin, module):
 def map_plugin_key(plugin, modules_map):
     return create_plugin_key(plugin, modules_map[plugin])
 
-def load_plugins(*pacakge_paths, debug=True, check_class= None) -> Tuple[ List[Type[Plugin]], List[ModuleType], Dict[Type[Plugin]], ModuleType]:
+def load_plugins(*pacakge_paths, debug=True, check_class= None) -> Tuple[ List[Type[Plugin]], List[ModuleType], Dict[ Type[Plugin], ModuleType]]:
     plugin_classes: List[Type[Plugin]] = []
 
     def _register(plugin_cls): # Append a plugin into the accumulating list of plugins
