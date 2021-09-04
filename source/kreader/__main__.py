@@ -3,7 +3,7 @@ from .ui import constants
 import asyncio
 
 CURR_DIR = os.path.dirname( os.path.abspath(__file__) )
-CONFIG_FILE_PATH = os.path.join(CURR_DIR, 'kprefs.dll')
+CONFIG_FILE_PATH = os.path.join(CURR_DIR, 'kprefs.json')
 
 os.environ[constants.CONFIG_KEY] = CONFIG_FILE_PATH
 os.environ[constants.DEBUG_KEY] = str(True)
