@@ -76,8 +76,11 @@ class MangaDexChapter(chapter.Chapter):
         groups = MangaDexChapter.get_groups(*group_uuids)
 
         chapter_str: str = data['data']['attributes']['chapter']
-        integer, point, float_bits = chapter_str.partition('.')
-        chapter_num = float( integer + point + float_bits.replace('.', '') ) # This is highly unecessary for most people but "Tedama ni Toritai Kurokiya-san" has a chapter where the number is 1.5.1
+        if chapter_str is None:
+            chapter_num = 0
+        else:
+            integer, point, float_bits = chapter_str.partition('.')
+            chapter_num = float( integer + point + float_bits.replace('.', '') ) # This is highly unecessary for most people but "Tedama ni Toritai Kurokiya-san" has a chapter where the number is 1.5.1
 
         language = LANGUAGE_MAP[ data['data']['attributes']['translatedLanguage'] ]
 
