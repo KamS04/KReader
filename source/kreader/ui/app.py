@@ -8,7 +8,6 @@ import os
 
 from ..utils.preferences import PreferencesManager
 from .. import source_utils
-from ..plugin_sys import loader
 from ..utils import sources
 
 from . import constants
