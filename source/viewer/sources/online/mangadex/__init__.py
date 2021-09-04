@@ -50,7 +50,7 @@ class MangaDex(source.Source):
         return None
 
     def call_search_for_manga(query, offset=0, limit=20):
-        url = MangaDex._search_api + 'title=%s&offset=%d&limit=%d&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic' % (query, offset, limit)
+        url = MangaDex._search_api + 'title=%s&offset=%d&limit=%d&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic' % (query, offset, limit)
         return requests.get(url)
 
     def get_search_data(query) -> Generator[List[dict], None, None]:

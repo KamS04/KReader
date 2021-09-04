@@ -65,7 +65,7 @@ class Version:
         return self.big == other.big and self.small == other.small and self.patch == other.patch
 
 
-_VERSION = Version('0.1.3')
+_VERSION = Version('0.1.4')
 _VERSION_PAGE = 'https://kams04.github.io/KReader/'
 
 
