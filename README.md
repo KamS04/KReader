@@ -56,7 +56,7 @@ Just pull the new repository.
     - Linux uses must also install tkinter, this varies with distribution so you can do it yourselves
         -  For distribution based on Debian the following command will work
         ```
-        sudo apt-get install pyt
+        sudo apt-get install python-tk
         ```
         - For distributions based on Fedora the following command will work
         ```
