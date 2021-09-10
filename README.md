@@ -10,6 +10,8 @@ Desktop Manga/Webtoon Reader
 
 ****
 
+![App Screenshots](./readme_images/OverallImage.png)
+
 ## Update Instructions
 
 ### Non-Technical Method
