@@ -4,7 +4,7 @@ Desktop Manga/Webtoon Reader
 ****
 **Author**: Kam S
 
-**Version**: 0.1.0
+**Version**: 0.1.4
 
 **Platform**: Python - Desktop ( Windows - MacOS - Linux )
 
