@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple, Type
 import os
 import pkgutil
 
-from . import Plugin
+from . import ConfigurablePlugin, Plugin
 from .. import source_utils
 from ..config_sys import Configurable, OutdatedConfigurableException
 
@@ -62,35 +62,36 @@ def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: d
         plugin: Plugin = plugin_cls() # Therefore plugins must not have any __init__ parameters
         #instead set up any of these parameters in a configuration object
 
-        configurable: Configurable = None
-        configurable, version = plugin.request_configurable()
+        if isinstance(plugin, ConfigurablePlugin):
+            configurable: Configurable = None
+            configurable, version = plugin.request_configurable()
 
-        if configurable is not None:
-            configuration = None
-            plugin_key = map_plugin_key(plugin_cls, modules_map)
+            if configurable is not None:
+                configuration = None
+                plugin_key = map_plugin_key(plugin_cls, modules_map)
 
-            config_keys = {}
-            if plugin_key in plugin_data.keys():
-                pre_data = plugin_data[plugin_key]
-                pre_version = pre_data['version']
-                pre_config = pre_data['config']
+                config_keys = {}
+                if plugin_key in plugin_data.keys():
+                    pre_data = plugin_data[plugin_key]
+                    pre_version = pre_data['version']
+                    pre_config = pre_data['config']
 
-                if pre_version < version:
-                    try:
-                        pre_config = plugin.upgrade_configuration(pre_config, pre_version)
-                        if pre_config is None:
-                            pre_config = {}
-                    except OutdatedConfigurableException as e:
-                        print('Outdated configuration for ', plugin.name)
-                elif pre_version > version:
-                    print('Configuration for', plugin.name, 'is newer than the plugin')
-                    pre_config = {}
+                    if pre_version < version:
+                        try:
+                            pre_config = plugin.upgrade_configuration(pre_config, pre_version)
+                            if pre_config is None:
+                                pre_config = {}
+                        except OutdatedConfigurableException as e:
+                            print('Outdated configuration for ', plugin.name)
+                    elif pre_version > version:
+                        print('Configuration for', plugin.name, 'is newer than the plugin')
+                        pre_config = {}
+                    
+                    config_keys = pre_config
                 
-                config_keys = pre_config
-            
-            configuration = configurable(**config_keys)
+                configuration = configurable(**config_keys)
 
-            plugin.configuration = configuration
+                plugin.configuration = configuration
         
         plugin._unique_key = plugin_key
 
@@ -99,13 +100,15 @@ def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: d
     return plugins
 
 def convert_to_data(plugin: Plugin):
-    configurable, version = plugin.request_configurable()
+    if isinstance(plugin, ConfigurablePlugin):
+        configurable, version = plugin.request_configurable()
 
-    if configurable is None:
-        return None, None
-    
-    configuration = plugin.configuration
-    config = configuration.data
-    data = { 'version': version, 'config': config }
-    plugin_key = plugin._unique_key
-    return plugin_key, data
+        if configurable is None:
+            return None
+        
+        configuration = plugin.configuration
+        config = configuration.data
+        data = { 'version': version, 'config': config }
+        plugin_key = plugin._unique_key
+        return plugin_key, data
+    return None
