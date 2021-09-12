@@ -10,8 +10,7 @@ class LabelButton(ButtonBehavior, Label, Background):
     normal_color = get_color_from_hex('#585858')
     disabled_color = get_color_from_hex('#1a1a1a')
 
-    def __init__(self, *args, **kwargs):
-        super(LabelButton, self).__init__(*args, **kwargs)
+    def on_kv_post(self, base_widget):
         self.on_disabled(self, self.disabled)
 
     def on_state(self, instance, new_state):
