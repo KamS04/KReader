@@ -10,7 +10,9 @@ from ..utils.preferences import PreferencesManager
 from .. import source_utils
 from ..utils import sources
 
-from . import constants
+from .pallete import Pallete
+
+from .constants import app_constants
 from . import handlers
 
 def get_prefs(config_file):
@@ -22,7 +24,7 @@ def get_prefs(config_file):
     
     return prefs
 
-DEBUG = bool( os.getenv(constants.DEBUG_KEY) )
+DEBUG = bool( os.getenv(app_constants.DEBUG_KEY) )
 
 FILE_PATH = os.path.abspath(__file__)
 BASE_FOLDER = os.path.dirname(FILE_PATH)
@@ -30,15 +32,19 @@ KV_FOLDER = os.path.join(BASE_FOLDER, 'kv')
 PREFERENCE_LOCK = threading.Lock()
 APP: 'KReader' = None
 
-os.environ[constants.KV_FOLDER] = KV_FOLDER
+os.environ[app_constants.KV_FOLDER] = KV_FOLDER
 
 MAIN_KV_FILE = os.path.join(KV_FOLDER, 'main.kv')
 
-CONFIG_FILE_PATH = os.getenv(constants.CONFIG_KEY)
+CONFIG_FILE_PATH = os.getenv(app_constants.CONFIG_KEY)
 print('config', CONFIG_FILE_PATH)
 
 class KReader(MDApp):
     kv_file = MAIN_KV_FILE
+
+    def __init__(self, *args, **kwargs):
+        super(KReader, self).__init__(*args, **kwargs)
+        self.pallete = Pallete()
 
     def build(self):
         return Builder.load_file(self.kv_file)
