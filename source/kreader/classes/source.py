@@ -16,17 +16,17 @@ class Source(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def fetch_details_from_uri(self, uri: str) -> 'models.Manga':
+    async def fetch_details_from_uri(self, uri: str) -> 'models.Manga':
         '''Turn the uri from choose_uri into a Manga object'''
         pass
 
     @abstractmethod
-    def initialize(self, manga: 'models.Manga') -> 'models.Manga':
+    async def initialize(self, manga: 'models.Manga') -> 'models.Manga':
         '''Any Additional actions that need to be taken before a manga is saved or displayed'''
         pass
 
     @abstractmethod
-    def search(self, query: str, title = True, author = False, group = False) -> Generator[List['models.Manga'], None, None]:
+    async def search(self, query: str, title = True, author = False, group = False) -> Generator[List['models.Manga'], None, None]:
         '''Search for a specific query and filter'''
         pass
 
@@ -44,12 +44,12 @@ class Source(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_cover_image(self, manga: 'models.Manga') -> Tuple[BytesIO, str]:
+    async def get_cover_image(self, manga: 'models.Manga') -> Tuple[BytesIO, str]:
         '''Fetch the cover image and turn it into BytesIO'''
         pass
 
     @abstractmethod
-    def fetch_chapters(self, manga: 'models.Manga') -> Generator[List['models.Chapter'], None, None]:
+    async def fetch_chapters(self, manga: 'models.Manga') -> Generator[List['models.Chapter'], None, None]:
         '''Fetch a list of chapters associated with this Manga'''
         pass
 
@@ -59,7 +59,7 @@ class Source(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def fetch_number_of_pages(self, chapter: 'models.Chapter') -> int:
+    async def fetch_number_of_pages(self, chapter: 'models.Chapter') -> int:
         ''' Fetch the number of pages in this chapter
             needed to create enough widgets to display the pages
             Also save any data that will be needed to render these pages in
@@ -69,11 +69,11 @@ class Source(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def render_page(self, chapter: 'models.Chapter', page_number: int) -> Tuple[BytesIO, str]:
+    async def render_page(self, chapter: 'models.Chapter', page_number: int) -> Tuple[BytesIO, str]:
         '''Render the page'''
         pass
 
-    def finish_rendering(self, chapter: 'models.Chapter'):
+    async def finish_rendering(self, chapter: 'models.Chapter'):
         '''In case any action needs to be taken after all the pages are rendered'''
         pass
 
@@ -82,34 +82,9 @@ class Source(metaclass=ABCMeta):
         '''Does the Source support siging in and therefore some form of a user list'''
         return False
 
-    @abstractproperty
-    def needs_to_intercept_cloudflare(self) -> bool:
-        '''Displays the bypass cloudflare button'''
-        return False
-
-    def get_cloudflare_client(self) -> CloudFlareInterceptor:
-        return None
-
-    def get_sign_in_info(self) -> Any:
-        ''' Do whatever is required to get whatever data the source needs (e.g. username) to sign in'''
-        pass
-
-    def sign_in(self, data):
-        '''Sign in using the data recieved in get_sign_in_info'''
-        pass
-
-    def re_sign_in(self) -> bool:
-        '''Try to sign in using values from the configuration return if sign in was successful'''
-        pass
-
-    def sign_out(self, data):
-        pass
-
-
 class StaticSource(Plugin, Source):
     def __str__(self):
         return self.name
-
 
 class ConfigurableSource(ConfigurablePlugin, Source):
     '''Plugin base class that assumes a configurable will exist
@@ -128,3 +103,33 @@ class ConfigurableSource(ConfigurablePlugin, Source):
     
     def __str__(self):
         return self.name
+
+class SourceWithAccounts(ConfigurableSource):
+    def get_sign_in_info(self) -> Any:
+        ''' Do whatever is required to get whatever data the source needs (e.g. username) to sign in'''
+        pass
+
+    async def sign_in(self, data):
+        '''Sign in using the data recieved in get_sign_in_info'''
+        pass
+
+    async def re_sign_in(self) -> bool:
+        '''Try to sign in using values from the configuration return if sign in was successful'''
+        pass
+
+    async def sign_out(self, data):
+        pass
+
+class CloudFlareBlockedSource(ConfigurableSource):
+    _client = None
+    
+    @abstractproperty
+    def domain(self) -> str:
+        """The domain that the source will pull data from"""
+        return ''
+
+    @property
+    def cloudflare_client(self) -> CloudFlareInterceptor:
+        if self._client is None:
+            self._client = CloudFlareInterceptor(self.domain)
+        return self._client
