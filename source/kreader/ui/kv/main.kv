@@ -1,0 +1,50 @@
+#:import names kreader.ui.constants.screen_names
+#:import SideBarCommunicator kreader.ui.widgets.sidebar.SideBarCommunicator
+#:import constrain kreader.ui.utils.constrain
+#:import transitions kivy.uix.screenmanager
+#:import Background kreader.ui.widgets.background.Background
+
+ScreenManager:
+    id: root_manager
+
+    Screen:
+        FloatLayout:
+            SideBarCommunicator:
+                id: side_bar
+                size_hint: None, 1
+                width: constrain(root.width * .3, 240, 370)
+                pos_hint: { 'x': 0, 'top': 1 }
+                tabs: { 'Library': names.library, 'Browse': names.browse, 'Sources': names.sources }
+                default: 'Library'
+                on_selection:   
+                    tabs_screen_manager.current = self.selection
+            
+            ScreenManager:
+                id: tabs_screen_manager
+                size_hint: None, 1
+                width: root.width - side_bar.width
+                pos_hint: { 'right': 1, 'top': 1 }
+                transition: transitions.NoTransition()
+                Screen:
+                    name: names.library
+                    Background:
+                        background_color: 1, 0, 0, 1
+                        Label:
+                            text: 'Library'
+                            color: app.pallete.black
+                
+                Screen:
+                    name: names.browse
+                    Background:
+                        background_color: 0, 1, 0, 1
+                        Label:
+                            text: 'Browse'
+                            color: app.pallete.black
+
+                Screen:
+                    name: names.sources
+                    Background:
+                        background_color: 0, 0, 1, 1
+                        Label:
+                            text: 'Sources'
+                            color: app.pallete.black
