@@ -9,6 +9,7 @@ from ..config_sys import Configurable
 
 from . import models
 
+
 class Source(metaclass=ABCMeta):
     @abstractmethod
     def choose_uri(self) -> str:
@@ -20,7 +21,6 @@ class Source(metaclass=ABCMeta):
         '''Turn the uri from choose_uri into a Manga object'''
         pass
 
-    @abstractmethod
     async def initialize(self, manga: 'models.Manga') -> 'models.Manga':
         '''Any Additional actions that need to be taken before a manga is saved or displayed'''
         pass
@@ -33,7 +33,7 @@ class Source(metaclass=ABCMeta):
     @abstractmethod    
     def manga_to_data(self, manga: 'models.Manga') -> dict:
         '''Turn the object into a a dictionary to be saved to persistent storage
-            Note, chapter data should also be saved here
+            Note, chapter data should NOT be saved here
         '''
         pass
 
@@ -54,37 +54,43 @@ class Source(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def chapters_to_data(self, chapter: 'models.Chapter') -> dict:
+    def chapter_to_data(self, chapter: 'models.Chapter') -> dict:
         '''Turn chapter to data that can be saved'''
         pass
+
+    @abstractmethod
+    def chapter_from_data(self, data: dict) -> 'models.Chapter':
+        '''Turn chapter data into chapter object
+            Note a manga object does not need to be attached here
+        '''
+        pass
+
+    @abstractmethod
+    async def prepare_chapter_for_rendering(self, chapter: 'models.Chapter'):
+        '''Anything that needs to be done before fetch_umber_of_pages
+            is called
+        '''
 
     @abstractmethod
     async def fetch_number_of_pages(self, chapter: 'models.Chapter') -> int:
         ''' Fetch the number of pages in this chapter
             needed to create enough widgets to display the pages
-            Also save any data that will be needed to render these pages in
-            the chapter object, (i.e. design your chapter object to be able to save
-            this data)
         '''
         pass
     
     @abstractmethod
     async def render_page(self, chapter: 'models.Chapter', page_number: int) -> Tuple[BytesIO, str]:
-        '''Render the page'''
+        '''Render the page at the index'''
         pass
 
     async def finish_rendering(self, chapter: 'models.Chapter'):
         '''In case any action needs to be taken after all the pages are rendered'''
         pass
 
-    @abstractproperty
-    def can_sign_in(self) -> bool:
-        '''Does the Source support siging in and therefore some form of a user list'''
-        return False
 
 class StaticSource(Plugin, Source):
-    def __str__(self):
-        return self.name
+    pass
+
 
 class ConfigurableSource(ConfigurablePlugin, Source):
     '''Plugin base class that assumes a configurable will exist
@@ -95,14 +101,16 @@ class ConfigurableSource(ConfigurablePlugin, Source):
     
     @property
     def configuration(self) -> Configurable:
+        if self._configurable is None:
+            self._configurable = self.request_configurable()[0]()
         return self._configurable
     
     @configuration.setter
     def configuration(self, configuration) -> Configurable:
         self._configuration = configuration
-    
-    def __str__(self):
-        return self.name
+
+class HTTPSource(ConfigurableSource):
+    pass
 
 class SourceWithAccounts(ConfigurableSource):
     def get_sign_in_info(self) -> Any:
@@ -119,6 +127,7 @@ class SourceWithAccounts(ConfigurableSource):
 
     async def sign_out(self, data):
         pass
+
 
 class CloudFlareBlockedSource(ConfigurableSource):
     _client = None
