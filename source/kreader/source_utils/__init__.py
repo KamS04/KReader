@@ -8,3 +8,6 @@ def get_prefs() -> PreferencesManager:
 
 def get_install_directory() -> str:
     raise Exception('No Install directory specified')
+
+def configuration_changed(unique_key, configuration):
+    raise Exception('No configuration change listener specified')
