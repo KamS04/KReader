@@ -1,5 +1,4 @@
 import asyncio
-from source.kreader import thread_sys
 from types import ModuleType
 from typing import Dict, List, Type
 
