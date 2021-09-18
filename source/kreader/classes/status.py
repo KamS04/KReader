@@ -14,4 +14,4 @@ _STATUS_MAP = {
     ABANDONED: 'Abandoned'
 }
 
-STATUS_MAP = DefaultingDict(_STATUS_MAP, UNKNOWN)
+STATUS_MAP = DefaultingDict(UNKNOWN, _STATUS_MAP)
