@@ -1,16 +1,21 @@
 import json
 from .properties import Property
 
-def create_config(cls):
-    for prop_name in vars(cls):
-        prop = cls.__getattribute__(cls, prop_name)
-        if isinstance(prop, Property):
-            cls._props_map[prop_name] = prop
+def create_config(version):
+    def _create_config(cls):
+        for prop_name in vars(cls):
+            prop = cls.__getattribute__(cls, prop_name)
+            if isinstance(prop, Property):
+                cls._props_map[prop_name] = prop
+        
+        for prop_name in cls._props_map.keys():
+            delattr(cls, prop_name)
+        
+        cls._version = version
+
+        return cls
     
-    for prop_name in cls._props_map.keys():
-        delattr(cls, prop_name)
-    
-    return cls
+    return _create_config
 
 
 class OutdatedConfigurableException(ValueError):
@@ -30,6 +35,7 @@ class OutdatedConfigurableException(ValueError):
 
 class Configurable(object):
     _props_map = {}
+    _write_callback = None
 
     def __init__(self, **kwargs):
         props_map = {}
@@ -50,9 +56,11 @@ class Configurable(object):
             return self.__getattribute__('_props_map')[name].get_value()
         raise AttributeError(name)
     
-    def __setattr(self, name, value):
+    def __setattr__(self, name, value):
         if name in self._props_map.keys():
             self._props_map[name].set_value(value)
+            if self._write_callback is not None:
+                self._write_callback()
         else:
             super(Configurable, self).__setattr__(name, value)
     

@@ -91,6 +91,8 @@ def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: d
                 
                 configuration = configurable(**config_keys)
 
+                configuration.write_callback = lambda configuration, unique_key=plugin_key: source_utils.set_configuration(unique_key, configuration)
+
                 plugin.configuration = configuration
         
         plugin._unique_key = plugin_key
@@ -99,16 +101,19 @@ def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: d
     
     return plugins
 
-def convert_to_data(plugin: Plugin):
+def convert_to_data(plugin: Plugin) -> Tuple[str, dict]:
     if isinstance(plugin, ConfigurablePlugin):
         configurable, version = plugin.request_configurable()
 
         if configurable is None:
             return None
         
-        configuration = plugin.configuration
-        config = configuration.data
-        data = { 'version': version, 'config': config }
+        data = convert_configurartion_to_data(plugin.configuration)
         plugin_key = plugin._unique_key
         return plugin_key, data
     return None
+
+def convert_configurartion_to_data(configuration: Configurable) -> dict:
+    config = configuration.data
+    data = { 'version': configuration._version, 'config': config }
+    return data

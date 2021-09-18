@@ -11,31 +11,6 @@ class Plugin(metaclass=ABCMeta):
     def name(self):
         '''Name of the plugin used to identify the plugin's save data'''
         pass
-
-    @abstractmethod
-    def request_configurable(self):
-        '''Return the configurable class as well as its version'''
-        return None, None
-    
-    def upgrade_configuration(self, previous_config, config_version):
-        '''The configuration found in the prefs file was outdated, try to update it'''
-        return None
-    
-    @property
-    def configuration(self) -> Configurable:
-        '''The configuration object of the plugin'''
-        return None
-    
-    @configuration.setter
-    def configuration(self, configuration):
-        '''In case the plugin wants to verify that the configuration is usable'''
-        pass
-    
-    def get_editable_configuration(self):
-        '''Used to edit the configurable so that no changes are applied before the the setter is called'''
-        if self.configuration is not None:
-            return self.configuration.copy()
-        return None
     
     def __str__(self):
         return self.name
@@ -55,3 +30,18 @@ class ConfigurablePlugin(Plugin):
     @configuration.setter
     def configuration(self, configuration) -> Configurable:
         self._configuration = configuration
+    
+    @abstractmethod
+    def request_configurable(self):
+        '''Return the configurable class as well as its version'''
+        return None, None
+    
+    def upgrade_configuration(self, previous_config, config_version):
+        '''The configuration found in the prefs file was outdated, try to update it'''
+        return None
+    
+    def get_editable_configuration(self):
+        '''Used to edit the configurable so that no changes are applied before the the setter is called'''
+        if self.configuration is not None:
+            return self.configuration.copy()
+        return None
