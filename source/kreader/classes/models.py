@@ -1,7 +1,12 @@
 from typing import List
 
 
-class Manga:
+class NamedTupleLikeString:
+    def __str__(self):
+        return self.__class__.__name__ + '(' + ', '.join( f'{member}={value}' for member, value in vars(self).items() )
+
+
+class Manga(NamedTupleLikeString):
     title: str = ''
     authors: List[str] = []
     artists: List[str] = []
@@ -10,7 +15,7 @@ class Manga:
     uri: str = ''
 
 
-class Chapter:
+class Chapter(NamedTupleLikeString):
     manga: 'Manga' = None
     title: str = ''
     groups: List[str] = []
