@@ -13,15 +13,6 @@ from ..classes.source import Source
 SOURCEMANAGER: 'SourceManager' = None
 
 class SourceManager:
-    _instance = None
-
-    @property
-    def instance() -> 'SourceManager':
-        print('in instance method')
-        if SourceManager._instance is None:
-            SourceManager._instance = SourceManager()
-        return SourceManager._instance
-
     def __init__(self):
         self.paths = source_utils.get_prefs().plugin_paths.copy()
         self.install_path = source_utils.get_install_directory()
