@@ -40,11 +40,14 @@ class AwaitableItem:
             
             raise
 
+    async def to_task(self):
+        return await self._run()
+
     def __await__(self):
         return self._run().__await__()
     
     async def __aenter__(self):
-        await self._run()
+        return await self._run()
     
     def __call__(self):
         return self._run()
@@ -99,6 +102,8 @@ class Handler:
         
         if not inspect.isawaitable(coroutine): # If the function hasn't been called, call it here
             coroutine = coroutine()
+        
+        task.comms.put_nowait(coroutine)
         try:
             result = await coroutine
             task.comms.put_nowait(result)
@@ -127,7 +132,7 @@ class Handler:
         return new_handler, init_event
 
 
-def run_in_handler(handler: Handler, func: Callable, communicaton: Tuple[asyncio.Event, asyncio.Queue] = None):
+def run_in_handler(handler: Handler, func: Callable, communicaton: Tuple[asyncio.Event, asyncio.Queue] = None) -> asyncio.Task:
     '''
     Throws a function onto a handler
     It is assumed that the function being run is synchronous
@@ -142,7 +147,10 @@ def run_in_handler(handler: Handler, func: Callable, communicaton: Tuple[asyncio
         if communicaton is not None:
             communicaton[1].put_nowait(result)
             communicaton[0].set()
-    asyncio.create_task(curr_thread_task())
+    return asyncio.create_task(curr_thread_task())
+
+async def async_run_sync(handler, func: Callable):
+    return func()
 
 async def init_handlers(handler_names, handler_cls=None, debug=False) -> List[HandlerItem]:
     '''
