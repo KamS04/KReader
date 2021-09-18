@@ -1,3 +1,5 @@
+import asyncio
+from source.kreader import thread_sys
 from types import ModuleType
 from typing import Dict, List, Type
 
@@ -28,6 +30,16 @@ class SourceManager:
         self._modules: List[ModuleType] = []
         self._plugin_classes: List[Type[Plugin]] = []
         self._plugin_module_map: Dict[Type[Plugin], ModuleType] = []
+
+        def _write_config_change(unique_key, configuration):
+            async def _async_write_config_change():
+                prefs = source_utils.get_prefs()
+                data = loader.convert_configurartion_to_data(configuration)
+                prefs.plugin_data[unique_key] = data
+                prefs.dump_changes()
+            asyncio.create_task( handlers.PROCESSING(_async_write_config_change) )
+        
+        source_utils.configuration_changed = _write_config_change
 
     async def load_sources(self):
         plugins, plugins_classes, modules, plugin_module_map = await handlers.PROCESSING( partial(self._load_plugins_from_paths, self.paths) )
