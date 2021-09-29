@@ -2,3 +2,4 @@ venv/*
 venv
 __pycache__
 kprefs.json
+source/kreader/plugins
