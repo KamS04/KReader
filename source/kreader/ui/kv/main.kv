@@ -3,6 +3,7 @@
 #:import constrain kreader.ui.utils.constrain
 #:import transitions kivy.uix.screenmanager
 #:import Background kreader.ui.widgets.background.Background
+#:import SourcesScreen kreader.ui.screens.sourcesscreen.SourcesScreen
 
 ScreenManager:
     id: root_manager
@@ -41,10 +42,5 @@ ScreenManager:
                             text: 'Browse'
                             color: app.pallete.black
 
-                Screen:
+                SourcesScreen:
                     name: names.sources
-                    Background:
-                        background_color: 0, 0, 1, 1
-                        Label:
-                            text: 'Sources'
-                            color: app.pallete.black
