@@ -55,6 +55,9 @@ class PreferencesManager(object):
     
     def __getitem__(self, name):
         return self._cached[name]
+
+    def get(self, key, default):
+        return self._cached.get(key, default)
     
     def __setitem__(self, name, value, save=False):
         self._cached[name] = value
