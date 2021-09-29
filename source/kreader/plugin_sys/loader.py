@@ -14,7 +14,7 @@ def create_plugin_key(plugin, module):
 def map_plugin_key(plugin, modules_map):
     return create_plugin_key(plugin, modules_map[plugin])
 
-def load_plugins(*pacakge_paths, debug=True, check_class= None) -> Tuple[ List[Type[Plugin]], List[ModuleType], Dict[ Type[Plugin], ModuleType]]:
+def load_plugins(*package_paths, debug=True, check_class= None) -> Tuple[ List[Type[Plugin]], List[ModuleType], Dict[ Type[Plugin], ModuleType]]:
     plugin_classes: List[Type[Plugin]] = []
 
     def _register(plugin_cls): # Append a plugin into the accumulating list of plugins
@@ -28,7 +28,7 @@ def load_plugins(*pacakge_paths, debug=True, check_class= None) -> Tuple[ List[T
     source_utils.register = _register # now any module using the register function will use the custom register function
 
     parent_dirs = {}
-    for package_path in pacakge_paths:
+    for package_path in package_paths:
         parent_dir = os.path.dirname(package_path)
 
         if parent_dir in parent_dirs.keys():

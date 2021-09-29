@@ -24,11 +24,8 @@ class AwaitableItem:
         coroutine: asyncio.Future = None
         try:
             coroutine = await self.communication_queue.get() # First item will be the coroutine
-            print('received something', coroutine)
             await self.completion_event.wait()
             result = await self.communication_queue.get() # Second item will be the actual output of the coroutine
-            print('received another thing')
-            print(result)
             if self.exception_occurred.is_set():
                 raise result
             return result

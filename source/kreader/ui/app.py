@@ -37,7 +37,6 @@ os.environ[app_constants.KV_FOLDER] = KV_FOLDER
 MAIN_KV_FILE = os.path.join(KV_FOLDER, 'main.kv')
 
 CONFIG_FILE_PATH = os.getenv(app_constants.CONFIG_KEY)
-print('config', CONFIG_FILE_PATH)
 
 class KReader(MDApp):
     kv_file = MAIN_KV_FILE
@@ -62,7 +61,6 @@ class KReader(MDApp):
         source_utils.get_install_directory = _get_install_dir
         sources.create_now()
         asyncio.create_task(sources.SOURCEMANAGER.load_sources())
-
 
     @property
     def prefs(self) -> PreferencesManager:

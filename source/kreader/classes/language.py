@@ -1,4 +1,3 @@
-from source.viewer.sources.online.mangadex.maps import LANGUAGE_MAP
 from ..utils.defaulting import DefaultingDict
 
 UNKNOWN = 0
