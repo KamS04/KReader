@@ -23,4 +23,4 @@ def install_plugin(destination_path: str, plugin_path: str):
     plugin_zip.extractall(plugin_dir)
     module_name = os.path.basename(plugin_dir)
     
-    return module_name
+    return module_name, plugin_dir
