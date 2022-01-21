@@ -1,33 +1,10 @@
-KIVY_MODE = False
-try:
-    import tkinter
-    from tkinter.filedialog import askopenfilename, askdirectory
-except ModuleNotFoundError:
-    KIVY_MODE = True
+from plyer import filechooser
 
-def create_withdrawn_tkinter():
-    root = tkinter.Tk()
-    root.withdraw()
-    return root
+async def choose_file(*file_types, title='Select file', initial_dir='~/'):
+    return filechooser.open_file(title=title, path=initial_dir, filters=file_types)
 
-def choose_file(*file_types, title='Select file', initial_dir='~/'):
-    if not KIVY_MODE:
-        root = tkinter.Tk()
-        root.withdraw()
-        path = askopenfilename(title=title, filetypes=file_types, initialdir=initial_dir)
-        root.destroy()
-
-        return path
-
-    return None
-
-def choose_dir(title='Select directory', initial_dir='~/'):
-    if not KIVY_MODE:
-        root = create_withdrawn_tkinter()
-        path = askdirectory(initialdir=initial_dir, title=title)
-        root.destroy()
-
-        return path
+async def choose_dir(title='Select directory', initial_dir='~/'):
+    return filechooser.choose_dir(path=initial_dir, title=title)
 
 if __name__ == '__main__':
     choose_file()
