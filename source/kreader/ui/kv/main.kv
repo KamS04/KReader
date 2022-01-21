@@ -1,22 +1,36 @@
-#:import names kreader.ui.constants.screen_names
+#:import OverReachingScreenManager kreader.ui.widgets.over_reaching_screenmanager.OverReachingScreenManager
+#:import tabbed_names kreader.ui.constants.tabbed_names
+#:import over_names kreader.ui.constants.over_names
 #:import SideBarCommunicator kreader.ui.widgets.sidebar.SideBarCommunicator
 #:import constrain kreader.ui.utils.constrain
 #:import transitions kivy.uix.screenmanager
 #:import Background kreader.ui.widgets.background.Background
 #:import SourcesScreen kreader.ui.screens.sourcesscreen.SourcesScreen
 
-ScreenManager:
+OverReachingScreenManager:
     id: root_manager
+    user_input_screen: user_input_screen
+    
+    on_kv_post:
+        self.transition = transitions.NoTransition()
+        self.current = over_names.main
 
     Screen:
+        id: user_input_screen
+        name: over_names.uinput
+
+
+    Screen:
+        name: over_names.main
+
         FloatLayout:
             SideBarCommunicator:
                 id: side_bar
                 size_hint: None, 1
-                width: constrain(root.width * .3, 240, 370)
+                width: constrain(root.width * .3, 240, 300)
                 pos_hint: { 'x': 0, 'top': 1 }
-                tabs: { 'Library': names.library, 'Browse': names.browse, 'Sources': names.sources }
-                default: 'Library'
+                tabs: { 'Library': tabbed_names.library, 'Browse': tabbed_names.browse, 'Sources': tabbed_names.sources }
+                default: 'Sources'
                 on_selection:   
                     tabs_screen_manager.current = self.selection
             
@@ -27,7 +41,7 @@ ScreenManager:
                 pos_hint: { 'right': 1, 'top': 1 }
                 transition: transitions.NoTransition()
                 Screen:
-                    name: names.library
+                    name: tabbed_names.library
                     Background:
                         background_color: 1, 0, 0, 1
                         Label:
@@ -35,7 +49,7 @@ ScreenManager:
                             color: app.pallete.black
                 
                 Screen:
-                    name: names.browse
+                    name: tabbed_names.browse
                     Background:
                         background_color: 0, 1, 0, 1
                         Label:
@@ -43,4 +57,4 @@ ScreenManager:
                             color: app.pallete.black
 
                 SourcesScreen:
-                    name: names.sources
+                    name: tabbed_names.sources
