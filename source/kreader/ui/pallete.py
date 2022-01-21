@@ -9,3 +9,5 @@ class Pallete:
         self.dark_background = get_color_from_hex('#001242')
         self.accent = get_color_from_hex('#005E7C')
         self.darker_background = get_color_from_hex('#000022')
+        self.button_tint = get_color_from_hex('#77777744')
+
