@@ -11,8 +11,13 @@ from . import models
 
 
 class Source(metaclass=ABCMeta):
+    @abstractproperty
+    def icon(self) -> str:
+        '''Path to icon, Can be relative to the root dir of the plugin'''
+        pass
+
     @abstractmethod
-    def choose_uri(self) -> str:
+    async def choose_uri(self) -> str:
         '''Do whatever is required to choose a uri'''
         pass
 
