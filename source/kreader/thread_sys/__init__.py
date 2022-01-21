@@ -6,7 +6,7 @@ import inspect
 import types
 
 # Task that is handed to the Handler thread's listener loop
-Task = NamedTuple( 'Task', [ ('coroutine', asyncio.Future), ('completion_event', asyncio.Event), ('cancel_event', threading.Event), ('exception_occcurred', threading.Event), ('comms', asyncio.Queue) ] )
+Task = NamedTuple( 'Task', [ ('coroutine', asyncio.Future), ('completion_event', asyncio.Event), ('cancel_event', threading.Event), ('exception_occurred', threading.Event), ('comms', asyncio.Queue) ] )
 
 # Holds all data that could ever be needed about a Handler
 HandlerItem = NamedTuple('HandlerItem', [ ('name', str), ('handler', 'Handler'), ('init_event', asyncio.Event), ('thread', threading.Thread) ] )
@@ -108,8 +108,9 @@ class Handler:
             task.comms.put_nowait(result)
             task.completion_event.set()
         except Exception as esc:
-            task.exception_occcurred.set()
+            task.exception_occurred.set()
             task.comms.put_nowait(esc)
+            task.completion_event.set()
         del self._tasks[task]
     
     def set_init_event(self, event: threading.Event):
