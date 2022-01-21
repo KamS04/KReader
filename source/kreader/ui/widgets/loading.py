@@ -39,17 +39,23 @@ class LoadingBar(Widget):
 
     def on_is_loading(self, instance, is_loading):
         if is_loading:
-            self.start_animating()
+            self._start_animating()
         else:
-            self.stop_loading()
+            self._stop_loading()
     
-    def start_animating(self):
+    def _start_animating(self):
         self._rotation_angle = 0
         self.animate()
     
+    def start_loading(self):
+        self.is_loading = True
+
     def stop_loading(self):
+        self.is_loading = False
+
+    def _stop_loading(self):
         if self._animation is not None:
-            self._animation.stop()
+            self._animation.cancel(self)
             self._animation = None
     
     def animate(self, old_animation=None, object_being_animated=None):
