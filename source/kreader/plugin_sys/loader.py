@@ -14,18 +14,19 @@ def create_plugin_key(plugin, module):
 def map_plugin_key(plugin, modules_map):
     return create_plugin_key(plugin, modules_map[plugin])
 
-def load_plugins(*package_paths, debug=True, check_class= None) -> Tuple[ List[Type[Plugin]], List[ModuleType], Dict[ Type[Plugin], ModuleType]]:
+def load_plugins(package_paths, set_registerer, reset_registerer=None, debug=True, check_class= None) -> Tuple[ List[Type[Plugin]], List[ModuleType], Dict[ Type[Plugin], ModuleType]]:
     plugin_classes: List[Type[Plugin]] = []
 
     def _register(plugin_cls): # Append a plugin into the accumulating list of plugins
         if debug:
             print('registering', plugin_cls)
+        if not issubclass(plugin_cls, Plugin):
+            raise ValueError(f'{plugin_cls} is not a Plugin')
         if check_class is not None and not check_class(plugin_cls):
             raise ValueError(f'{plugin_cls} is not of the right class')
         plugin_classes.append(plugin_cls)
     
-    old_register = source_utils.register
-    source_utils.register = _register # now any module using the register function will use the custom register function
+    set_registerer(_register)
 
     parent_dirs = {}
     for package_path in package_paths:
@@ -48,7 +49,10 @@ def load_plugins(*package_paths, debug=True, check_class= None) -> Tuple[ List[T
                 if debug:
                     print(exc)
 
-    source_utils.register = old_register # reset the register function so no new plugins can be registered
+    print('finished registering')
+
+    if reset_registerer is not None:
+        reset_registerer()
 
     modules_map = { module.__name__: module for module in modules }
     plugin_module_map: Dict[Type[Plugin], ModuleType] = { plugin_cls: modules_map[plugin_cls.__module__] for plugin_cls in plugin_classes }
