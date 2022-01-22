@@ -30,9 +30,9 @@ class SourceManager:
             async def _async_write_config_change():
                 with source_utils.get_prefs() as prefs:
                     data = loader.convert_configurartion_to_data(configuration)
-                    prefs.plugin_data[unique_key] = data
+                    prefs.edit.plugin_data[unique_key] = data
                     prefs.dump_changes()
-            asyncio.create_task( handlers.PROCESSING(_async_write_config_change) )
+            asyncio.create_task( handlers.PROCESSING(_async_write_config_change).to_task() )
         
         source_utils.configuration_changed = _write_config_change
 
@@ -57,7 +57,8 @@ class SourceManager:
             plugins = loader.initialize_plugins(
                 plugin_classes, 
                 plugin_module_map, 
-                prefs.plugin_data
+                prefs.plugin_data,
+                update_configuration=source_utils.configuration_changed
             )
         return plugins, plugin_classes, modules, plugin_module_map
     
@@ -92,6 +93,12 @@ class SourceManager:
             self.paths.add(path)
         if len(self.paths) != old_length:
             self._update_paths()
+    
+    def _remove_paths(self, *old_paths):
+        old_length = len(self.paths)
+        self.paths = [ i for i in self.paths if i not in old_paths ]
+        if len(self.paths) != old_length:
+            self._update_paths()
 
     def _update_paths(self):
         with source_utils.get_prefs() as prefs:
@@ -109,6 +116,16 @@ class SourceManager:
     
     def uninstall_source(self, source):
         print('Uninstalling', source.name)
+        self._uninstall_source(source, clear_prefs=True)
+
+    def _uninstall_source(self, source, clear_prefs=True):
+        plugin_cls = type(source)
+        install_path = os.path.dirname(self._plugin_module_map[plugin_cls].__file__)
+        installer.uninstall_plugin(install_path)
+        self._remove_paths(install_path)
+
+        if clear_prefs:
+            pass
 
 
 def create_now():

@@ -1,4 +1,4 @@
-from types import ModuleType
+from types import ModuleType, FunctionType
 from typing import Dict, List, Tuple, Type
 
 import os
@@ -59,7 +59,7 @@ def load_plugins(package_paths, set_registerer, reset_registerer=None, debug=Tru
 
     return plugin_classes, modules, plugin_module_map
 
-def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: dict) -> List[Plugin]:
+def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: dict, update_configuration: FunctionType) -> List[Plugin]:
     plugins: List[Plugin] = []
 
     for plugin_cls in plugin_classes:
@@ -95,7 +95,7 @@ def initialize_plugins(plugin_classes: List[Plugin], modules_map, plugin_data: d
                 
                 configuration = configurable(**config_keys)
 
-                configuration.write_callback = lambda configuration, unique_key=plugin_key: source_utils.set_configuration(unique_key, configuration)
+                configuration._write_callback = lambda configuration, unique_key=plugin_key: update_configuration(unique_key, configuration)
 
                 plugin.configuration = configuration
         

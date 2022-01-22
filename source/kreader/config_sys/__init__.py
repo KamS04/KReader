@@ -60,7 +60,7 @@ class Configurable(object):
         if name in self._props_map.keys():
             self._props_map[name].set_value(value)
             if self._write_callback is not None:
-                self._write_callback()
+                self._write_callback(self)
         else:
             super(Configurable, self).__setattr__(name, value)
     

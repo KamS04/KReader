@@ -8,18 +8,19 @@ class Property:
         self.display = display
         self.user_edit = user_edit
         self.nullable = nullable
+        self._value = None
     
     def get_value(self):
-        return self.get_value
+        return self._value
     
     def set_value(self, new_value):
         if self.nullable or new_value is not None:
-            self.value = new_value
+            self._value = new_value
         else:
             raise ValueError('Value cannot be None')
     
     def to_dict(self):
-        return { 'nullable': self.nullable, 'display': self.display, 'user_edit': self.user_edit, 'value': self.value}
+        return { 'nullable': self.nullable, 'display': self.display, 'user_edit': self.user_edit, 'value': self._value}
 
 
 class StringProperty(Property):

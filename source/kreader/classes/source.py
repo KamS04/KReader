@@ -102,13 +102,13 @@ class ConfigurableSource(ConfigurablePlugin, Source):
         and sets up the required private and public properties
         DOES NOT DO ANY FORM OF CONFIGURATION VALIDATION
     '''    
-    _configurable = None
+    _configuration = None
     
     @property
     def configuration(self) -> Configurable:
-        if self._configurable is None:
-            self._configurable = self.request_configurable()[0]()
-        return self._configurable
+        if self._configuration is None:
+            raise Exception("Plugin not correctly initialized, Configuration is None")
+        return self._configuration
     
     @configuration.setter
     def configuration(self, configuration) -> Configurable:
