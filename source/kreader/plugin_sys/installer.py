@@ -1,5 +1,6 @@
 import os
 import zipfile
+import shutil
 
 
 def install_plugin(destination_path: str, plugin_path: str):
@@ -11,7 +12,7 @@ def install_plugin(destination_path: str, plugin_path: str):
     while True:
         if os.path.exists(tmp_plugin_dir):
             idx += 1
-            tmp_plugin_dir += str(idx)
+            tmp_plugin_dir = plugin_dir + str(idx)
         else:
             break
 
@@ -24,3 +25,9 @@ def install_plugin(destination_path: str, plugin_path: str):
     module_name = os.path.basename(plugin_dir)
     
     return module_name, plugin_dir
+
+
+def uninstall_plugin(installation_path: str):
+    print('deleting', installation_path)
+    shutil.rmtree(installation_path)
+    
