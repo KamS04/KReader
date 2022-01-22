@@ -2,6 +2,9 @@ from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 
+from ...classes.source import Source
+from ....source import Source
+
 from ..app import KReader
 from ..widgets.scoped_widget import ScopedWidget
 from ... import source_utils
@@ -113,7 +116,10 @@ class SourcesScreen(Screen, ScopedWidget):
         print(selected_path)
         if not selected_path:
             KReader.get_instance().show_popup(title='Error', message='No File Selected')
-        elif os.path.exists(selected_path) and selected_path.split(os.path.extsep)[-1] == 'zip':
+            return
+        
+        selected_path = selected_path[0]
+        if os.path.exists(selected_path) and selected_path.split(os.path.extsep)[-1] == 'zip':
             await handlers.PROCESSING(lambda: self._save_selected_path(selected_path))
             asyncio.create_task(sources.SOURCEMANAGER.install_from_zip(selected_path))
     
@@ -143,7 +149,7 @@ class SourcesScreen(Screen, ScopedWidget):
     def _ask_uninstall(self, source, instance):
         KReader.get_instance().askyesno(title='Uninstall?', message=f'Are you sure you would like to uninstall {source.name}', on_positive=partial(self._uninstall, source))
 
-    def _uninstall(self, source, instance):
+    def _uninstall(self, source: Source, instance):
         sources.SOURCEMANAGER.uninstall_source(source)
 
 

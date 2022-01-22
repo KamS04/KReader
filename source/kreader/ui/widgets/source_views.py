@@ -1,6 +1,7 @@
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
 from kivy.uix.floatlayout import FloatLayout
+from kivy.clock import Clock
 
 from .gridlayout import SVGridLayout
 from .loading import LoadingBar
@@ -20,10 +21,6 @@ KV = '''
     size_hint_y: None
     height: max(54, name_label.height + 4)
 
-    # FloatLayout:
-    #     size_hint: 1, None
-    #     pos_hint: { 'x': 0, 'top': 1 }
-    #     height: max(50, name_label.height)
     GridLayout:
         size_hint: 1, None
         pos_hint: { 'x': 0, 'top': 1 }
@@ -42,11 +39,6 @@ KV = '''
                 source: root.icon_image
                 size_hint: None, None
                 size: 45, 45
-
-            # Background:
-            #     size: 45, 45
-            #     background_color: hex('#00ff00')
-            #     size_hint: None, None
 
             Label:
                 id: name_label
@@ -109,8 +101,11 @@ class SourceView(FloatLayout):
         self.register_event_type('on_settings')
         super(SourceView, self).__init__(**kwargs)
 
+    def _update_icon_image(self, *args):
+        self.icon_image = sources.SOURCEMANAGER.resolve_asset_path(self.source, self.source.icon)
+
     def on_source(self, instance, source):
-        self.icon_image = sources.SOURCEMANAGER.resolve_asset_path(source, source.icon)
+        Clock.schedule_once(self._update_icon_image, 0)
         self.ellipsed_name = source.name if len(source.name) < 30 else source.name[:27] + '...'
 
     def on_uninstall(self):
