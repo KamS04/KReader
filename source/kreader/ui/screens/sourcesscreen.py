@@ -3,7 +3,6 @@ from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 
 from ...classes.source import Source
-from ....source import Source
 
 from ..app import KReader
 from ..widgets.scoped_widget import ScopedWidget
